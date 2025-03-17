@@ -6,7 +6,7 @@ import { MqttController } from './mqtt.controller';
 
 @Module({
     imports: [
-        ConfigModule.forRoot(), // Carrega variáveis do .env
+        ConfigModule.forRoot(),
         ClientsModule.registerAsync([
             {
                 name: 'MQTT_SERVICE',
@@ -21,8 +21,8 @@ import { MqttController } from './mqtt.controller';
             },
         ]),
     ],
-    controllers: [MqttController], // Registra o controller de eventos MQTT
+    controllers: [MqttController],
     providers: [MqttService],
-    exports: [MqttService], // Exporta para ser usado em outros módulos, se necessário
+    exports: [MqttService],
 })
 export class MqttModule { }
