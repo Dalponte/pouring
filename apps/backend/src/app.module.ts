@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MqttModule } from './mqtt/mqtt.module';
-import { TelemetryProcessor } from './queue/telemetry.processor';
-import { OperationProcessor } from './queue/operation.processor';
+import { OperationProcessor } from './queue/processors/operation.processor';
 import { QueueModule } from './queue/queue.modules';
 
 @Module({
@@ -12,7 +11,6 @@ import { QueueModule } from './queue/queue.modules';
         QueueModule,
     ],
     providers: [
-        TelemetryProcessor,
         OperationProcessor,
     ],
 })
