@@ -10,15 +10,15 @@ export class QueueService {
     ) { }
 
     async addTelemetryJob(data: any) {
-        return this.telemetryQueue.add('process-telemetry', data, {
-            removeOnComplete: true,
+        return this.telemetryQueue.add('telemetry', data, {
+            removeOnComplete: { count: 100 },  // Mantém os 100 jobs mais recentes
             attempts: 3,
         });
     }
 
     async addOperationJob(data: any) {
-        return this.operationQueue.add('process-operation', data, {
-            removeOnComplete: true,
+        return this.operationQueue.add('operation', data, {
+            removeOnComplete: { count: 100 },  // Mantém os 100 jobs mais recentes
             attempts: 3,
         });
     }

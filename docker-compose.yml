@@ -34,6 +34,22 @@ services:
     ports:
       - "6379:6379"
 
+  bull-board:
+    image: deadly0/bull-board
+    container_name: bera-beer-bull-board
+    restart: always
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - QUEUES=telemetry,operation
+      - BULLMQ_MODE=true
+      - REFRESH_INTERVAL=5000
+      - MAX_JOBS_PER_PAGE=50
+    ports:
+      - "3020:3000"
+    depends_on:
+      - redis
+
   backend:
     build: ./apps/backend
     container_name: bera-beer-backend

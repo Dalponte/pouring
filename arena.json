@@ -1,0 +1,22 @@
+{
+    "queues": [
+        {
+            "type": "bullmq",
+            "name": "telemetry",
+            "hostId": "Redis Server",
+            "redis": {
+                "port": 6379,
+                "host": "redis"
+            }
+        },
+        {
+            "type": "bullmq",
+            "name": "operation",
+            "hostId": "Redis Server",
+            "redis": {
+                "port": 6379,
+                "host": "redis"
+            }
+        }
+    ]
+}

@@ -12,7 +12,7 @@ export class OperationProcessor extends WorkerHost {
     }
 
     async process(job: Job<any, any, string>) {
-        this.logger.debug(`Processando operação: ${JSON.stringify(job.data)}`);
+        this.logger.debug(`Processor Operation: ${JSON.stringify(job.data)}`);
 
         // Store the job data in the database
         const operation = await this.prisma.operation.create({

@@ -35,7 +35,7 @@ export function useMQTT(topic: string) {
 
     const sendMessage = () => {
         if (client) {
-            client.publish(TOPIC, "Mensagem de teste do Frontend", { qos: 1 });
+            client.publish(TOPIC, "Pouring 300ml", { qos: 1 });
             console.log("📡 Mensagem enviada pelo frontend!");
         }
     };
