@@ -3,10 +3,12 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MqttService } from './mqtt.service';
 import { MqttController } from './mqtt.controller';
+import { QueueModule } from 'src/queue/queue.modules';
 
 @Module({
     imports: [
         ConfigModule.forRoot(),
+        QueueModule,
         ClientsModule.registerAsync([
             {
                 name: 'MQTT_SERVICE',
