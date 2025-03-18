@@ -19,6 +19,7 @@
     "@nestjs/core": "^11.0.11",
     "@nestjs/microservices": "^11.0.11",
     "@nestjs/platform-express": "^11.0.11",
+    "@prisma/client": "6.5.0",
     "bullmq": "^5.43.1",
     "kafkajs": "^2.2.4",
     "mqtt": "^5.10.4",

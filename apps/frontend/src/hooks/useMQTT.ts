@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import mqtt from "mqtt";
 
 const MQTT_BROKER_URL = "ws://localhost:9001"; // WebSocket MQTT
-const TOPIC = 'telemetry'
+const TOPIC = 'operation'
 
 export function useMQTT(topic: string) {
     const [messages, setMessages] = useState<string[]>([]);

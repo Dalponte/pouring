@@ -12,3 +12,10 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Operation {
+  id        String   @id @default(uuid())
+  meta      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
