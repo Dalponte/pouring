@@ -14,10 +14,20 @@ export class OperationProcessor extends WorkerHost {
     async process(job: Job<any, any, string>) {
         this.logger.debug(`Processor Operation: ${JSON.stringify(job.data)}`);
 
-        // Store the job data in the database
+        const { tapId, tapName, operationId, client, meta, timestamp: timestampStr } = job.data;
+
+        // Convert timestamp string to Date object if it exists
+        const timestamp = timestampStr ? new Date(timestampStr) : undefined;
+
+        // Store the job data in the database with explicit fields
         const operation = await this.prisma.operation.create({
             data: {
-                meta: job.data,
+                tapId,
+                tapName,
+                operationId,
+                client,
+                meta,
+                timestamp,
             },
         });
 
