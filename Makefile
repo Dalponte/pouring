@@ -31,6 +31,9 @@ db-generate:
 db-reset:
 	cd apps/backend && npm run db:reset
 
+db-reset-and-migrate:
+	cd apps/backend && npm run db:reset && npm run migrate:dev
+
 # Install dependencies
 install:
 	cd apps/backend && npm install
@@ -49,4 +52,4 @@ help:
 	@echo "  db-reset        - Reset database"
 	@echo "  install         - Install dependencies"
 
-.PHONY: docker-up docker-down docker-logs docker-build dev-backend dev-frontend db-migrate db-generate db-reset install help
+.PHONY: docker-up docker-down docker-logs docker-build dev-backend dev-frontend db-migrate db-generate db-reset db-reset-and-migrate install help

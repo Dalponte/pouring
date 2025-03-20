@@ -9,7 +9,8 @@
     "start:prod": "node .",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "db:reset": "prisma migrate reset --force"
   },
   "keywords": [],
   "author": "",

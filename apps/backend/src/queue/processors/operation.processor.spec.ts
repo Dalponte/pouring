@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Job } from 'bullmq';
 import { PrismaService } from '../../prisma/prisma.service';
 import { OperationProcessor } from './operation.processor';
+import { Operation } from '@prisma/client';
 
 describe('OperationProcessor', () => {
     let processor: OperationProcessor;
@@ -31,7 +32,8 @@ describe('OperationProcessor', () => {
     });
 
     describe('process', () => {
-        const operationData = {
+        const operationData: Operation = {
+            id: 'mock-id',
             tapId: '19',
             tapName: 'TAP-1',
             operationId: 99,
@@ -43,32 +45,32 @@ describe('OperationProcessor', () => {
                 flowVolumeFactor: 0.5,
                 rfid: '900000',
             },
-            timestamp: new Date().toISOString()
-        }
+            timestamp: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
 
         it('should process an operation job and store it in the database', async () => {
-            const mockOperation = {
-                id: 'mock-id',
-                meta: operationData,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            };
-
             const job = {
                 data: operationData,
             } as Job;
 
-            jest.spyOn(prismaService.operation, 'create').mockResolvedValue(mockOperation);
+            jest.spyOn(prismaService.operation, 'create').mockResolvedValue(operationData);
 
             const result = await processor.process(job);
             expect(result).toEqual({
                 processed: true,
-                operationId: mockOperation.id,
+                operationId: operationData.id,
             });
 
             expect(prismaService.operation.create).toHaveBeenCalledWith({
                 data: {
-                    meta: operationData,
+                    tapId: operationData.tapId,
+                    tapName: operationData.tapName,
+                    operationId: operationData.operationId,
+                    client: operationData.client,
+                    meta: operationData.meta,
+                    timestamp: operationData.timestamp,
                 },
             });
         });

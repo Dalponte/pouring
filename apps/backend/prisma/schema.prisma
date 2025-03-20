@@ -19,7 +19,7 @@ model Operation {
   tapName     String?
   operationId Int?
   client      Int?
-  meta        Json // Keeping as untyped JSONB for flexibility
+  meta        Json      @default("{}")
   timestamp   DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
