@@ -1,0 +1,27 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Dispense {
+  id: ID!
+  meta: JSON!
+  type: String!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type Mutation {
+  createDispense(meta: JSON!, type: String!): Dispense!
+}
+
+type Query {
+  getAllDispenses: [Dispense!]!
+  getDispense(id: Float!): Dispense!
+}
+
+type Subscription {
+  dispenseAdded: Dispense!
+}

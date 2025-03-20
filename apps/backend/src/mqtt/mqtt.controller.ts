@@ -8,17 +8,12 @@ export class MqttController {
 
     constructor(private readonly queueService: QueueService) { }
 
-    // Handler para eventos de operação
-    @EventPattern('operation')
-    async handleOperation(@Payload() data: any) {
-        this.logger.log(`Recebido evento de operação: ${JSON.stringify(data)}`);
-        await this.queueService.addOperationJob(data);
-    }
+    @EventPattern('tap/events')
+    async handleTapEvents(@Payload() data: any) {
+        this.logger.log(`Recebido evento: ${JSON.stringify(data)}`);
 
-    // Handler para eventos de telemetria
-    @EventPattern('telemetry')
-    async handleTelemetry(@Payload() data: any) {
-        this.logger.log(`Recebido evento de telemetria: ${JSON.stringify(data)}`);
-        await this.queueService.addTelemetryJob(data);
+        if (data.type === 'dispense') {
+            return await this.queueService.addDispenseJob(data);
+        }
     }
 }
