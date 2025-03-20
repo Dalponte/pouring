@@ -10,7 +10,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "db:reset": "prisma migrate reset --force"
+    "db:reset": "prisma migrate reset --force",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate:dev": "npx prisma migrate dev",
+    "prisma:studio": "npx prisma studio"
   },
   "keywords": [],
   "author": "",
