@@ -8,8 +8,7 @@ describe('MqttController', () => {
 
     beforeEach(async () => {
         const queueServiceMock = {
-            addOperationJob: jest.fn(),
-            addTelemetryJob: jest.fn(),
+            addDispenseJob: jest.fn(),
         };
 
         const module: TestingModule = await Test.createTestingModule({
@@ -30,13 +29,12 @@ describe('MqttController', () => {
         expect(controller).toBeDefined();
     });
 
-    describe('handleOperation', () => {
-        it('should call addOperationJob on the queue service', async () => {
-            const operationData = {
+    describe('handleTapEvents', () => {
+        it('should call addDispenseJob for dispense events', async () => {
+            const dispenseData = {
+                type: 'dispense',
                 tapId: '19',
                 tapName: 'TAP-1',
-                operationId: 99,
-                client: 9,
                 meta: {
                     state: 'calculating',
                     flowCount: 1999,
@@ -47,30 +45,21 @@ describe('MqttController', () => {
                 timestamp: new Date().toISOString()
             };
 
-            await controller.handleOperation(operationData);
-            expect(queueService.addOperationJob).toHaveBeenCalledWith(operationData);
+            await controller.handleTapEvents(dispenseData);
+            expect(queueService.addDispenseJob).toHaveBeenCalledWith(dispenseData);
         });
-    });
 
-    describe('handleTelemetry', () => {
-        it('should call addTelemetryJob on the queue service', async () => {
-            const telemetryData = {
+        it('should not call any job methods for unknown event types', async () => {
+            const unknownEventData = {
+                type: 'unknown',
                 tapId: '19',
                 tapName: 'TAP-1',
-                operationId: null,
-                client: null,
-                meta: {
-                    state: 'calibrating',
-                    flowCount: 1999,
-                    volume: 300,
-                    flowVolumeFactor: 0.5,
-                    rfid: null,
-                },
+                meta: {},
                 timestamp: new Date().toISOString()
             };
 
-            await controller.handleTelemetry(telemetryData);
-            expect(queueService.addTelemetryJob).toHaveBeenCalledWith(telemetryData);
+            await controller.handleTapEvents(unknownEventData);
+            expect(queueService.addDispenseJob).not.toHaveBeenCalled();
         });
     });
 });

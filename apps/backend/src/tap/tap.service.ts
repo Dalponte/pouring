@@ -1,36 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Tap } from './tap.model';
-import { Dispense } from '../dispense/dispense.model';
+import { CreateTapInput } from './dto/create-tap.input';
+import { UpdateTapInput } from './dto/update-tap.input';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TapService {
     constructor(private prisma: PrismaService) { }
-
-    private mapToTapModel(data: any): Tap {
-        const tap = new Tap();
-        tap.id = data.id;
-        tap.name = data.name;
-        tap.meta = data.meta;
-        tap.createdAt = data.createdAt;
-        tap.updatedAt = data.updatedAt;
-        tap.deleted = data.deleted;
-
-        if (data.dispenses && Array.isArray(data.dispenses)) {
-            tap.dispenses = data.dispenses.map(d => {
-                const dispense = new Dispense();
-                dispense.id = d.id;
-                dispense.type = d.type;
-                dispense.meta = d.meta;
-                dispense.createdAt = d.createdAt;
-                dispense.updatedAt = d.updatedAt;
-                dispense.tapId = d.tapId;
-                return dispense;
-            });
-        }
-
-        return tap;
-    }
 
     async getTap(id: string, includeDeleted: boolean = false): Promise<Tap | null> {
         const where = { id };
@@ -43,7 +20,7 @@ export class TapService {
             include: { dispenses: true }
         });
 
-        return result ? this.mapToTapModel(result) : null;
+        return result as Tap | null;
     }
 
     async getAllTaps(includeDeleted: boolean = false): Promise<Tap[]> {
@@ -54,26 +31,26 @@ export class TapService {
             include: { dispenses: true }
         });
 
-        return results.map(result => this.mapToTapModel(result));
+        return results as Tap[];
     }
 
-    async createTap(data: { name: string, meta: any }): Promise<Tap> {
+    async createTap(createTapInput: CreateTapInput): Promise<Tap> {
         const result = await this.prisma.tap.create({
-            data,
+            data: createTapInput,
             include: { dispenses: true }
         });
 
-        return this.mapToTapModel(result);
+        return result as Tap;
     }
 
-    async updateTap(id: string, data: { name?: string, meta?: any }): Promise<Tap> {
+    async updateTap(id: string, updateTapInput: UpdateTapInput): Promise<Tap> {
         const result = await this.prisma.tap.update({
             where: { id },
-            data,
+            data: updateTapInput,
             include: { dispenses: true }
         });
 
-        return this.mapToTapModel(result);
+        return result as Tap;
     }
 
     async softDeleteTap(id: string): Promise<Tap> {
@@ -83,7 +60,7 @@ export class TapService {
             include: { dispenses: true }
         });
 
-        return this.mapToTapModel(result);
+        return result as Tap;
     }
 
     async restoreTap(id: string): Promise<Tap> {
@@ -93,7 +70,7 @@ export class TapService {
             include: { dispenses: true }
         });
 
-        return this.mapToTapModel(result);
+        return result as Tap;
     }
 
     async hardDeleteTap(id: string): Promise<Tap> {
@@ -102,6 +79,6 @@ export class TapService {
             include: { dispenses: true }
         });
 
-        return this.mapToTapModel(result);
+        return result as Tap;
     }
 }
