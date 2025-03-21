@@ -47,7 +47,7 @@ gf-feat:
 	@if [ -z "$(name)" ]; then echo "Usage: make git-flow-feature-start name=<feature-name>"; exit 1; fi
 	git flow feature start $(name)
 
-gf-feat-end:
+gf-feat-finish:
 	@if [ -z "$(name)" ]; then echo "Usage: make git-flow-feature-finish name=<feature-name>"; exit 1; fi
 	git flow feature finish $(name)
 
