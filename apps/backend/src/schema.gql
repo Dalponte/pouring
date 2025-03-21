@@ -2,10 +2,19 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Dispense {
+  createdAt: DateTime!
   id: ID!
   meta: JSON!
+  tap: Tap
+  tapId: String
   type: String!
+  updatedAt: DateTime!
 }
 
 """
@@ -14,14 +23,33 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 scalar JSON
 
 type Mutation {
-  createDispense(meta: JSON!, type: String!): Dispense!
+  createDispense(meta: JSON!, tapId: String, type: String!): Dispense!
+  createTap(meta: JSON, name: String!): Tap!
+  hardDeleteTap(id: String!): Tap!
+  restoreTap(id: String!): Tap!
+  softDeleteTap(id: String!): Tap!
+  updateTap(id: String!, meta: JSON, name: String): Tap!
 }
 
 type Query {
-  getAllDispenses: [Dispense!]!
   getDispense(id: Float!): Dispense!
+  getDispenses: [Dispense!]!
+  getTap(id: String!, includeDeleted: Boolean): Tap!
+  getTaps(includeDeleted: Boolean): [Tap!]!
 }
 
 type Subscription {
   dispenseAdded: Dispense!
+  tapAdded: Tap!
+  tapUpdated: Tap!
+}
+
+type Tap {
+  createdAt: DateTime!
+  deleted: Boolean!
+  dispenses: [Dispense!]
+  id: ID!
+  meta: JSON!
+  name: String!
+  updatedAt: DateTime!
 }

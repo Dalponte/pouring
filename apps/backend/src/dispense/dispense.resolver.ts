@@ -23,7 +23,7 @@ export class DispenseResolver implements OnModuleInit {
     }
 
     @Query(returns => [Dispense])
-    async getAllDispenses(): Promise<Dispense[]> {
+    async getDispenses(): Promise<Dispense[]> {
         return this.dispenseService.getAllDispenses();
     }
 
@@ -31,8 +31,9 @@ export class DispenseResolver implements OnModuleInit {
     async createDispense(
         @Args('type') type: string,
         @Args('meta', { type: () => GraphQLJSON }) meta: any,
+        @Args('tapId', { nullable: true }) tapId?: string,
     ): Promise<Dispense> {
-        const newDispense = await this.dispenseService.createDispense({ type, meta });
+        const newDispense = await this.dispenseService.createDispense({ type, meta, tapId });
         this.pubSub.publish('dispenseAdded', { dispenseAdded: newDispense });
         return newDispense;
     }

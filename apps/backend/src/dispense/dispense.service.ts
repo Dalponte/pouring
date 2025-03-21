@@ -1,20 +1,54 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, Dispense } from '@prisma/client';
+import { Dispense } from './dispense.model';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Prisma } from '@prisma/client';
+import { CreateDispenseInput } from './dto/create-dispense.input';
 
 @Injectable()
 export class DispenseService {
-    constructor(private prisma: PrismaService) { }
-
-    async createDispense(data: Prisma.DispenseCreateInput): Promise<Dispense> {
-        return this.prisma.dispense.create({ data });
-    }
+    constructor(
+        private prisma: PrismaService,
+        private eventEmitter: EventEmitter2
+    ) { }
 
     async getDispense(id: number): Promise<Dispense | null> {
-        return this.prisma.dispense.findUnique({ where: { id } });
+        const result = await this.prisma.dispense.findUnique({
+            where: { id },
+            include: { tap: true }
+        });
+
+        return result as Dispense | null;
     }
 
     async getAllDispenses(): Promise<Dispense[]> {
-        return this.prisma.dispense.findMany();
+        const results = await this.prisma.dispense.findMany({
+            include: { tap: true }
+        });
+
+        return results as Dispense[];
+    }
+
+    async createDispense(createDispenseInput: CreateDispenseInput): Promise<Dispense> {
+        const { type, meta, tapId } = createDispenseInput;
+
+        const data: Prisma.DispenseCreateInput = {
+            type,
+            meta,
+            ...(tapId && {
+                tap: {
+                    connect: { id: tapId }
+                }
+            })
+        };
+
+        const result = await this.prisma.dispense.create({
+            data,
+            include: { tap: true }
+        });
+
+        const dispense = result as Dispense;
+        this.eventEmitter.emit('dispense.created', dispense);
+        return dispense;
     }
 }

@@ -9,6 +9,7 @@ import { join } from 'path';
 import { DispenseProcessor } from './queue/processors/dispense.processor';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { TapModule } from './tap/tap.module';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         QueueModule,
         PrismaModule,
         DispenseModule,
+        TapModule,
     ],
     providers: [
         DispenseProcessor,
