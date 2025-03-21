@@ -3,19 +3,15 @@ import { PubSub } from 'graphql-subscriptions';
 import { DispenseService } from './dispense.service';
 import { Dispense } from './dispense.model';
 import { GraphQLJSON } from 'graphql-type-json';
-import { Inject, OnModuleInit } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 @Resolver(of => Dispense)
-export class DispenseResolver implements OnModuleInit {
+export class DispenseResolver {
     constructor(
         private readonly dispenseService: DispenseService,
         @Inject('PUB_SUB') private readonly pubSub: PubSub,
     ) { }
-
-    onModuleInit() {
-        // You can add initialization code here if needed
-    }
 
     @Query(returns => Dispense)
     async getDispense(@Args('id') id: number): Promise<Dispense | null> {
