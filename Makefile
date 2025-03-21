@@ -39,6 +39,34 @@ install:
 	cd apps/backend && npm install
 	cd apps/frontend && npm install
 
+# Git Flow commands
+gf-init:
+	git flow init -d
+
+gf-feat:
+	@if [ -z "$(name)" ]; then echo "Usage: make git-flow-feature-start name=<feature-name>"; exit 1; fi
+	git flow feature start $(name)
+
+gf-feat-finish:
+	@if [ -z "$(name)" ]; then echo "Usage: make git-flow-feature-finish name=<feature-name>"; exit 1; fi
+	git flow feature finish $(name)
+
+gf-release:
+	@if [ -z "$(version)" ]; then echo "Usage: make git-flow-release-start version=<release-version>"; exit 1; fi
+	git flow release start $(version)
+
+gf-release-finish:
+	@if [ -z "$(version)" ]; then echo "Usage: make git-flow-release-finish version=<release-version>"; exit 1; fi
+	git flow release finish $(version)
+
+gf-hotfix:
+	@if [ -z "$(version)" ]; then echo "Usage: make git-flow-hotfix-start version=<hotfix-version>"; exit 1; fi
+	git flow hotfix start $(version)
+
+gf-hotfix-finish:
+	@if [ -z "$(version)" ]; then echo "Usage: make git-flow-hotfix-finish version=<hotfix-version>"; exit 1; fi
+	git flow hotfix finish $(version)
+
 help:
 	@echo "Available commands:"
 	@echo "  docker-up       - Start all containers"
@@ -52,4 +80,4 @@ help:
 	@echo "  db-reset        - Reset database"
 	@echo "  install         - Install dependencies"
 
-.PHONY: docker-up docker-down docker-logs docker-build dev-backend dev-frontend db-migrate db-generate db-reset db-reset-and-migrate install help
+.PHONY: docker-up docker-down docker-logs docker-build dev-backend dev-frontend db-migrate db-generate db-reset db-reset-and-migrate install git-flow-init git-flow-feature-start git-flow-feature-finish git-flow-release-start git-flow-release-finish git-flow-hotfix-start git-flow-hotfix-finish help

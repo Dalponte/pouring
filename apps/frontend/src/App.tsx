@@ -1,7 +1,7 @@
 import { useMQTT } from "./hooks/useMQTT";
 
 function App() {
-  const { messages, sendMessage } = useMQTT("operation");
+  const { messages, sendMessage } = useMQTT("tap/events");
 
   return (
     <div style={{ textAlign: "center", padding: "2rem" }}>

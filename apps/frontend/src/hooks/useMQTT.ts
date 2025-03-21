@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import mqtt from "mqtt";
 
 const MQTT_BROKER_URL = "ws://localhost:9001";
-const TOPIC = 'operation'
+const TOPIC = 'tap/events'
 
 export function useMQTT(topic: string) {
     const [messages, setMessages] = useState<string[]>([]);
@@ -35,7 +35,10 @@ export function useMQTT(topic: string) {
 
     const sendMessage = () => {
         if (client) {
-            client.publish(TOPIC, "Pouring 300ml", { qos: 1 });
+            client.publish(
+                TOPIC,
+                JSON.stringify({ type: 'dispense', meta: { amount: 300 } }),
+                { qos: 1 });
             console.log("📡 Mensagem enviada pelo frontend!");
         }
     };

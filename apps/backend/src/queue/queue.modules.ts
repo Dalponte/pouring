@@ -16,10 +16,7 @@ import { QueueService } from './queue.service';
             inject: [ConfigService],
         }),
         BullModule.registerQueue({
-            name: 'telemetry',
-        }),
-        BullModule.registerQueue({
-            name: 'operation',
+            name: 'dispense',
         }),
     ],
     providers: [QueueService],

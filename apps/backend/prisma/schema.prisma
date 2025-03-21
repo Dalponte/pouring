@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,14 +10,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Operation {
-  id          String    @id @default(uuid())
-  tapId       String?
-  tapName     String?
-  operationId Int?
-  client      Int?
-  meta        Json      @default("{}")
-  timestamp   DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model Dispense {
+  id        Int      @id @default(autoincrement())
+  type      String
+  meta      Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
