@@ -1,17 +1,25 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { GraphQLJSON } from 'graphql-type-json';
+import { IsNotEmpty, IsObject, IsOptional, IsUUID } from 'class-validator';
+import { DispenseType } from '@prisma/client';
 
 @InputType()
 export class CreateDispenseInput {
+    @Field(() => DispenseType)
+    @IsNotEmpty()
+    type: DispenseType;
+
+    @Field(() => Object, { nullable: true })
+    @IsObject()
+    @IsOptional()
+    meta?: Record<string, any>;
+
     @Field()
-    type: string;
-
-    @Field(() => GraphQLJSON)
-    meta: any;
-
-    @Field({ nullable: true })
-    tapId?: string;
+    @IsUUID()
+    @IsNotEmpty()
+    tapId: string;
 
     @Field({ nullable: true })
+    @IsUUID()
+    @IsOptional()
     clientId?: string;
 }

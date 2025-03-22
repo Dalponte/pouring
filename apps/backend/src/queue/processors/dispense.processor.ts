@@ -31,30 +31,28 @@ export class DispenseProcessor extends WorkerHost {
 
         const data: any = {
             type: dispenseInput.type,
-            meta: dispenseInput.meta
+            meta: dispenseInput.meta,
+            tap: { connect: { id: dispenseInput.tapId } },
+            client: dispenseInput.clientId ? { connect: { id: dispenseInput.clientId } } : undefined
         };
 
-        if (dispenseInput.tapId) {
-            data.tap = { connect: { id: dispenseInput.tapId } };
+        try {
+            const dispense = await this.prisma.dispense.create({
+                data,
+                include: {
+                    tap: true,
+                    client: true
+                }
+            });
+
+            this.logger.debug(`Dispense stored with ID: ${dispense.id}`);
+
+            this.eventEmitter.emit('dispense.created', dispense);
+
+            return { processed: true, dispenseId: dispense.id };
+        } catch (error) {
+            this.logger.error(`Failed to create dispense: ${error.message}`, error.stack);
+            throw new Error(`Failed to process dispense: ${error.message}`);
         }
-
-        if (dispenseInput.clientId) {
-            data.client = { connect: { id: dispenseInput.clientId } };
-        }
-
-        const dispense = await this.prisma.dispense.create({
-            data,
-            include: {
-                tap: true,
-                client: true
-            }
-        });
-
-        this.logger.debug(`Dispense stored with ID: ${dispense.id}`);
-
-        // Emit event instead of direct PubSub
-        this.eventEmitter.emit('dispense.created', dispense);
-
-        return { processed: true, dispenseId: dispense.id };
     }
 }

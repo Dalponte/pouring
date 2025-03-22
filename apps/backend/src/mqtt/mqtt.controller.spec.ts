@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MqttController } from './mqtt.controller';
 import { QueueService } from '../queue/queue.service';
 import { TapEvent } from '../queue/types/tap-event.type';
+import { DispenseType } from '@prisma/client';
 
 describe('MqttController', () => {
     let controller: MqttController;
@@ -29,7 +30,7 @@ describe('MqttController', () => {
     describe('tap/events', () => {
         it('should call addDispenseJob for dispense events', async () => {
             const dispenseData: TapEvent = {
-                type: 'dispense',
+                type: DispenseType.AUTO_SERVICE,
                 tapId: 'tap-uuid-mock',
                 tagId: '9999',
                 meta: {
@@ -49,7 +50,7 @@ describe('MqttController', () => {
 
         it('should not call any job methods for unknown event types', async () => {
             const unknownEventData: TapEvent = {
-                type: 'unknown',
+                type: DispenseType.LOSS,
                 tapId: 'tap-uuid-mock',
                 meta: {},
                 timestamp: new Date().toISOString()

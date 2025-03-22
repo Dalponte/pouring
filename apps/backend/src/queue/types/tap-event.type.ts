@@ -1,10 +1,10 @@
-import { GraphQLJSON } from 'graphql-type-json';
+import { DispenseType } from '@prisma/client';
 
 export interface TapEvent {
     tapId: string;
-    type: string;
+    type: DispenseType;
     tagId?: string;
-    meta?: any;
+    meta?: Record<string, any>;
     message?: string | null;
     timestamp?: string;
 }
