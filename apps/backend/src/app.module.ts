@@ -10,6 +10,7 @@ import { DispenseProcessor } from './queue/processors/dispense.processor';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TapModule } from './tap/tap.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import { TapModule } from './tap/tap.module';
         PrismaModule,
         DispenseModule,
         TapModule,
+        TagModule,
     ],
     providers: [
         DispenseProcessor,

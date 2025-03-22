@@ -29,3 +29,13 @@ model Tap {
   deleted   Boolean    @default(false)
   dispenses Dispense[]
 }
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique
+  reference String
+  meta      Json      @default("{}") @db.JsonB
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
