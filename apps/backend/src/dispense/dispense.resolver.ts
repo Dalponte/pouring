@@ -5,6 +5,7 @@ import { Dispense } from './dispense.model';
 import { GraphQLJSON } from 'graphql-type-json';
 import { Inject } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { CreateDispenseInput } from './dto/create-dispense.input';
 
 @Resolver(of => Dispense)
 export class DispenseResolver {
@@ -28,8 +29,10 @@ export class DispenseResolver {
         @Args('type') type: string,
         @Args('meta', { type: () => GraphQLJSON }) meta: any,
         @Args('tapId', { nullable: true }) tapId?: string,
+        @Args('clientId', { nullable: true }) clientId?: string,
     ): Promise<Dispense> {
-        const newDispense = await this.dispenseService.createDispense({ type, meta, tapId });
+        const input: CreateDispenseInput = { type, meta, tapId, clientId };
+        const newDispense = await this.dispenseService.createDispense(input);
         this.pubSub.publish('dispenseAdded', { dispenseAdded: newDispense });
         return newDispense;
     }

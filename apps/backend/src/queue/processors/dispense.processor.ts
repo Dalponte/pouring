@@ -18,13 +18,24 @@ export class DispenseProcessor extends WorkerHost {
     async process(job: Job<any, any, string>) {
         this.logger.debug(`Processor Dispense: ${JSON.stringify(job.data)}`);
 
-        const { type, meta = {} } = job.data;
+        const { type, meta = {}, tapId, clientId } = job.data;
+
+        const data: any = { type, meta };
+
+        if (tapId) {
+            data.tap = { connect: { id: tapId } };
+        }
+
+        if (clientId) {
+            data.client = { connect: { id: clientId } };
+        }
 
         const dispense = await this.prisma.dispense.create({
-            data: {
-                type,
-                meta,
-            },
+            data,
+            include: {
+                tap: true,
+                client: true
+            }
         });
 
         this.logger.debug(`Dispense stored with ID: ${dispense.id}`);

@@ -11,4 +11,7 @@ export class CreateDispenseInput {
 
     @Field({ nullable: true })
     tapId?: string;
+
+    @Field({ nullable: true })
+    clientId?: string;
 }

@@ -29,6 +29,8 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Dispense {
+  client: Client
+  clientId: String
   createdAt: DateTime!
   id: ID!
   meta: JSON!
@@ -47,7 +49,7 @@ type Mutation {
   addClientToTag(clientId: String!, tagId: Int!): Tag!
   addTagToClient(clientId: String!, tagId: Int!): Client!
   createClient(createClientInput: CreateClientInput!): Client!
-  createDispense(meta: JSON!, tapId: String, type: String!): Dispense!
+  createDispense(clientId: String, meta: JSON!, tapId: String, type: String!): Dispense!
   createTag(createTagInput: CreateTagInput!): Tag!
   createTap(meta: JSON, name: String!): Tap!
   deleteClient(id: String!): Client!

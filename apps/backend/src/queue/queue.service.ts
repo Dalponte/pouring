@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
+import { CreateDispenseInput } from '../dispense/dto/create-dispense.input';
 
 @Injectable()
 export class QueueService {
@@ -8,7 +9,7 @@ export class QueueService {
         @InjectQueue('dispense') private readonly dispenseQueue: Queue,
     ) { }
 
-    async addDispenseJob(data: any) {
+    async addDispenseJob(data: CreateDispenseInput) {
         return this.dispenseQueue.add('dispense', data, {
             removeOnComplete: { count: 100 },
             attempts: 2,

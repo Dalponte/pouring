@@ -15,7 +15,7 @@ export class DispenseService {
     async getDispense(id: number): Promise<Dispense | null> {
         const result = await this.prisma.dispense.findUnique({
             where: { id },
-            include: { tap: true }
+            include: { tap: true, client: true }
         });
 
         return result as Dispense | null;
@@ -23,14 +23,14 @@ export class DispenseService {
 
     async getAllDispenses(): Promise<Dispense[]> {
         const results = await this.prisma.dispense.findMany({
-            include: { tap: true }
+            include: { tap: true, client: true }
         });
 
         return results as Dispense[];
     }
 
     async createDispense(createDispenseInput: CreateDispenseInput): Promise<Dispense> {
-        const { type, meta, tapId } = createDispenseInput;
+        const { type, meta, tapId, clientId } = createDispenseInput;
 
         const data: Prisma.DispenseCreateInput = {
             type,
@@ -39,12 +39,17 @@ export class DispenseService {
                 tap: {
                     connect: { id: tapId }
                 }
+            }),
+            ...(clientId && {
+                client: {
+                    connect: { id: clientId }
+                }
             })
         };
 
         const result = await this.prisma.dispense.create({
             data,
-            include: { tap: true }
+            include: { tap: true, client: true }
         });
 
         const dispense = result as Dispense;

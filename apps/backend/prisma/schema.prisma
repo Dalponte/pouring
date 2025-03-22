@@ -18,6 +18,8 @@ model Dispense {
   updatedAt DateTime @updatedAt
   tap       Tap?     @relation(fields: [tapId], references: [id])
   tapId     String?  @db.Uuid
+  client    Client?  @relation(fields: [clientId], references: [id])
+  clientId  String?  @db.Uuid
 }
 
 model Tap {
@@ -42,11 +44,12 @@ model Tag {
 }
 
 model Client {
-  id        String    @id @default(uuid()) @db.Uuid
+  id        String     @id @default(uuid()) @db.Uuid
   name      String
-  meta      Json      @default("{}") @db.JsonB
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  meta      Json       @default("{}") @db.JsonB
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   deletedAt DateTime?
-  tags      Tag[]     @relation("TagToClient")
+  tags      Tag[]      @relation("TagToClient")
+  dispenses Dispense[]
 }
