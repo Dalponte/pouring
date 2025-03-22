@@ -11,6 +11,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TapModule } from './tap/tap.module';
 import { TagModule } from './tag/tag.module';
+import { ClientModule } from './client/client.module';
 
 @Module({
     imports: [
@@ -33,6 +34,7 @@ import { TagModule } from './tag/tag.module';
         DispenseModule,
         TapModule,
         TagModule,
+        ClientModule,
     ],
     providers: [
         DispenseProcessor,
