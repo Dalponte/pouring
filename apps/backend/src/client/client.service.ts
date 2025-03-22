@@ -16,6 +16,7 @@ export class ClientService {
 
         const result = await this.prisma.client.findFirst({
             where,
+            include: { tags: true }
         });
 
         return result as Client | null;
@@ -26,6 +27,7 @@ export class ClientService {
 
         const results = await this.prisma.client.findMany({
             where,
+            include: { tags: true }
         });
 
         return results as Client[];
@@ -74,5 +76,39 @@ export class ClientService {
         });
 
         return result as Client;
+    }
+
+    async addTagToClient(clientId: string, tagId: number): Promise<Client> {
+        const client = await this.getClient(clientId);
+        if (!client) {
+            throw new Error(`Client with ID ${clientId} not found or is deleted`);
+        }
+
+        return this.prisma.client.update({
+            where: { id: clientId },
+            data: {
+                tags: {
+                    connect: { id: tagId }
+                }
+            },
+            include: { tags: true }
+        }) as unknown as Client;
+    }
+
+    async removeTagFromClient(clientId: string, tagId: number): Promise<Client> {
+        const client = await this.getClient(clientId);
+        if (!client) {
+            throw new Error(`Client with ID ${clientId} not found or is deleted`);
+        }
+
+        return this.prisma.client.update({
+            where: { id: clientId },
+            data: {
+                tags: {
+                    disconnect: { id: tagId }
+                }
+            },
+            include: { tags: true }
+        }) as unknown as Client;
     }
 }

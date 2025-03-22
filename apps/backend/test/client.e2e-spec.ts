@@ -8,6 +8,7 @@ describe('ClientResolver (e2e)', () => {
     let app: INestApplication;
     let prisma: PrismaService;
     let clientId: string;
+    let tagIds: number[] = [];
 
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -20,10 +21,12 @@ describe('ClientResolver (e2e)', () => {
 
         // Clean up database before tests
         await prisma.client.deleteMany({});
+        await prisma.tag.deleteMany({});
     });
 
     afterAll(async () => {
         await prisma.client.deleteMany({});
+        await prisma.tag.deleteMany({});
         await app.close();
     });
 
@@ -212,5 +215,179 @@ describe('ClientResolver (e2e)', () => {
         const foundDeletedClient = response.body.data.getClients.find(client => client.id === clientId);
         expect(foundDeletedClient).toBeDefined();
         expect(foundDeletedClient.deletedAt).not.toBeNull();
+    });
+
+    it('should create a new client for the relationship testing', async () => {
+        const createClientMutation = `
+      mutation {
+        createClient(createClientInput: {
+          name: "Relation Test Client",
+          meta: { purpose: "Tag relationship testing" }
+        }) {
+          id
+          name
+          meta
+        }
+      }
+    `;
+
+        const response = await request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: createClientMutation,
+            });
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.createClient).toBeDefined();
+        expect(response.body.data.createClient.name).toBe('Relation Test Client');
+
+        clientId = response.body.data.createClient.id;
+    });
+
+    it('should create multiple tags for testing', async () => {
+        // Create first tag
+        let createTagMutation = `
+      mutation {
+        createTag(createTagInput: {
+          code: "TAG1",
+          reference: "First Tag",
+          meta: { order: 1 }
+        }) {
+          id
+          code
+        }
+      }
+    `;
+
+        let response = await request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: createTagMutation,
+            });
+
+        expect(response.status).toBe(200);
+        tagIds.push(response.body.data.createTag.id);
+
+        // Create second tag
+        createTagMutation = `
+      mutation {
+        createTag(createTagInput: {
+          code: "TAG2",
+          reference: "Second Tag",
+          meta: { order: 2 }
+        }) {
+          id
+          code
+        }
+      }
+    `;
+
+        response = await request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: createTagMutation,
+            });
+
+        expect(response.status).toBe(200);
+        tagIds.push(response.body.data.createTag.id);
+    });
+
+    it('should add tags to client', async () => {
+        let addTagMutation = `
+      mutation {
+        addTagToClient(clientId: "${clientId}", tagId: ${tagIds[0]}) {
+          id
+          name
+          tags {
+            id
+            code
+          }
+        }
+      }
+    `;
+
+        let response = await request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: addTagMutation,
+            });
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.addTagToClient.tags).toHaveLength(1);
+        expect(response.body.data.addTagToClient.tags[0].id).toBe(tagIds[0]);
+
+        // Add second tag
+        addTagMutation = `
+      mutation {
+        addTagToClient(clientId: "${clientId}", tagId: ${tagIds[1]}) {
+          id
+          name
+          tags {
+            id
+            code
+          }
+        }
+      }
+    `;
+
+        response = await request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: addTagMutation,
+            });
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.addTagToClient.tags).toHaveLength(2);
+        expect(response.body.data.addTagToClient.tags[1].id).toBe(tagIds[1]);
+    });
+
+    it('should get client with tags', async () => {
+        const query = `
+      query {
+        getClient(id: "${clientId}") {
+          id
+          name
+          tags {
+            id
+            code
+            reference
+          }
+        }
+      }
+    `;
+
+        const response = await request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query,
+            });
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.getClient.tags).toHaveLength(2);
+    });
+
+    it('should remove a tag from client', async () => {
+        const removeTagMutation = `
+      mutation {
+        removeTagFromClient(clientId: "${clientId}", tagId: ${tagIds[0]}) {
+          id
+          name
+          tags {
+            id
+            code
+          }
+        }
+      }
+    `;
+
+        const response = await request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: removeTagMutation,
+            });
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.removeTagFromClient.tags).toHaveLength(1);
+        expect(response.body.data.removeTagFromClient.tags[0].id).toBe(tagIds[1]);
     });
 });

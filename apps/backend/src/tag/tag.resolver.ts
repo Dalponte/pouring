@@ -39,4 +39,20 @@ export class TagResolver {
     async deleteTag(@Args('id', { type: () => Int }) id: number): Promise<Tag> {
         return this.tagService.softDeleteTag(id);
     }
+
+    @Mutation(returns => Tag)
+    async addClientToTag(
+        @Args('tagId', { type: () => Int }) tagId: number,
+        @Args('clientId') clientId: string,
+    ): Promise<Tag> {
+        return this.tagService.addClientToTag(tagId, clientId);
+    }
+
+    @Mutation(returns => Tag)
+    async removeClientFromTag(
+        @Args('tagId', { type: () => Int }) tagId: number,
+        @Args('clientId') clientId: string,
+    ): Promise<Tag> {
+        return this.tagService.removeClientFromTag(tagId, clientId);
+    }
 }

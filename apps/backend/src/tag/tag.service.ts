@@ -17,6 +17,7 @@ export class TagService {
 
         const result = await this.prisma.tag.findFirst({
             where,
+            include: { clients: true }
         });
 
         return result as Tag | null;
@@ -28,6 +29,7 @@ export class TagService {
 
         const results = await this.prisma.tag.findMany({
             where,
+            include: { clients: true }
         });
 
         return results as Tag[];
@@ -77,5 +79,39 @@ export class TagService {
         });
 
         return result as Tag;
+    }
+
+    async addClientToTag(tagId: number, clientId: string): Promise<Tag> {
+        const tag = await this.getTag(tagId);
+        if (!tag) {
+            throw new Error(`Tag with ID ${tagId} not found or is deleted`);
+        }
+
+        return this.prisma.tag.update({
+            where: { id: tagId },
+            data: {
+                clients: {
+                    connect: { id: clientId }
+                }
+            },
+            include: { clients: true }
+        }) as unknown as Tag;
+    }
+
+    async removeClientFromTag(tagId: number, clientId: string): Promise<Tag> {
+        const tag = await this.getTag(tagId);
+        if (!tag) {
+            throw new Error(`Tag with ID ${tagId} not found or is deleted`);
+        }
+
+        return this.prisma.tag.update({
+            where: { id: tagId },
+            data: {
+                clients: {
+                    disconnect: { id: clientId }
+                }
+            },
+            include: { clients: true }
+        }) as unknown as Tag;
     }
 }

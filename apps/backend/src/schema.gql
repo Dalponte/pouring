@@ -8,6 +8,7 @@ type Client {
   id: ID!
   meta: JSON!
   name: String!
+  tags: [Tag!]
   updatedAt: DateTime!
 }
 
@@ -43,6 +44,8 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 scalar JSON
 
 type Mutation {
+  addClientToTag(clientId: String!, tagId: Int!): Tag!
+  addTagToClient(clientId: String!, tagId: Int!): Client!
   createClient(createClientInput: CreateClientInput!): Client!
   createDispense(meta: JSON!, tapId: String, type: String!): Dispense!
   createTag(createTagInput: CreateTagInput!): Tag!
@@ -50,6 +53,8 @@ type Mutation {
   deleteClient(id: String!): Client!
   deleteTag(id: Int!): Tag!
   hardDeleteTap(id: String!): Tap!
+  removeClientFromTag(clientId: String!, tagId: Int!): Tag!
+  removeTagFromClient(clientId: String!, tagId: Int!): Client!
   restoreTap(id: String!): Tap!
   softDeleteTap(id: String!): Tap!
   updateClient(id: String!, updateClientInput: UpdateClientInput!): Client!
@@ -75,6 +80,7 @@ type Subscription {
 }
 
 type Tag {
+  clients: [Client!]
   code: String!
   createdAt: DateTime!
   deletedAt: DateTime

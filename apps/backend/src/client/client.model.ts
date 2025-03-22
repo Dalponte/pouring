@@ -1,5 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
+import { Tag } from '../tag/tag.model';
 
 @ObjectType()
 export class Client {
@@ -20,4 +21,7 @@ export class Client {
 
     @Field({ nullable: true })
     deletedAt?: Date;
+
+    @Field(() => [Tag], { nullable: true })
+    tags?: Tag[];
 }

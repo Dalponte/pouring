@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ClientService } from './client.service';
 import { Client } from './client.model';
 import { CreateClientInput } from './dto/create-client.input';
@@ -40,5 +40,21 @@ export class ClientResolver {
     @Mutation(returns => Client)
     async deleteClient(@Args('id') id: string): Promise<Client> {
         return this.clientService.softDeleteClient(id);
+    }
+
+    @Mutation(returns => Client)
+    async addTagToClient(
+        @Args('clientId') clientId: string,
+        @Args('tagId', { type: () => Int }) tagId: number,
+    ): Promise<Client> {
+        return this.clientService.addTagToClient(clientId, tagId);
+    }
+
+    @Mutation(returns => Client)
+    async removeTagFromClient(
+        @Args('clientId') clientId: string,
+        @Args('tagId', { type: () => Int }) tagId: number,
+    ): Promise<Client> {
+        return this.clientService.removeTagFromClient(clientId, tagId);
     }
 }

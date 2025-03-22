@@ -1,5 +1,6 @@
 import { Field, ObjectType, ID, Int } from '@nestjs/graphql';
 import { GraphQLJSON } from 'graphql-type-json';
+import { Client } from '../client/client.model';
 
 @ObjectType()
 export class Tag {
@@ -22,5 +23,8 @@ export class Tag {
     updatedAt: Date;
 
     @Field({ nullable: true })
-    deletedAt?: Date; // Changed from boolean to nullable Date
+    deletedAt?: Date;
+
+    @Field(() => [Client], { nullable: true })
+    clients?: Client[];
 }
