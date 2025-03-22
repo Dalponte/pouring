@@ -14,6 +14,11 @@ docker-build:
 docker-recreate:
 	docker-compose up --build --force-recreate --remove-orphans
 
+# Add a specific target to just prepare MQTT
+setup-mqtt:
+	mkdir -p mqtt/config mqtt/data mqtt/log
+	chmod -R 777 mqtt
+
 # Project start
 dev-backend:
 	cd apps/backend && npm run start:dev

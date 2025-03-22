@@ -26,6 +26,7 @@ services:
     environment:
       - MQTT_HOST=0.0.0.0
       - MQTT_PORT=1883
+    user: 1000:1000
 
   redis:
     image: redis:alpine
@@ -49,34 +50,6 @@ services:
       - "3020:3000"
     depends_on:
       - redis
-
-  backend:
-    build: ./apps/backend
-    container_name: bera-beer-backend
-    restart: always
-    depends_on:
-      - mqtt
-      - redis
-      - db
-    environment:
-      DATABASE_URL: postgres://bera:bera@db:5432/bera-beer
-      MQTT_BROKER: mqtt://mqtt:1883
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      NODE_ENV: dev
-    ports:
-      - "3000:3000"
-
-  frontend:
-    build: ./apps/frontend
-    container_name: bera-beer-frontend
-    restart: always
-    ports:
-      - "5173:5173"
-    environment:
-      - VITE_MQTT_BROKER=ws://mqtt:9001
-    depends_on:
-      - mqtt
 
 volumes:
   db_data:
