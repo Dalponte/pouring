@@ -3,6 +3,8 @@ import { Logger } from '@nestjs/common';
 import { Job } from 'bullmq';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { TapEvent } from '../types/tap-event.type';
+import { CreateDispenseInput } from '../../dispense/dto/create-dispense.input';
 
 @Processor('dispense')
 export class DispenseProcessor extends WorkerHost {
@@ -15,19 +17,29 @@ export class DispenseProcessor extends WorkerHost {
         super();
     }
 
-    async process(job: Job<any, any, string>) {
+    async process(job: Job<TapEvent, any, string>) {
         this.logger.debug(`Processor Dispense: ${JSON.stringify(job.data)}`);
 
-        const { type, meta = {}, tapId, clientId } = job.data;
+        const tapEvent = job.data;
 
-        const data: any = { type, meta };
+        // Convert TapEvent to CreateDispenseInput structure
+        const dispenseInput: CreateDispenseInput = {
+            type: tapEvent.type,
+            meta: tapEvent.meta || {},
+            tapId: tapEvent.tapId
+        };
 
-        if (tapId) {
-            data.tap = { connect: { id: tapId } };
+        const data: any = {
+            type: dispenseInput.type,
+            meta: dispenseInput.meta
+        };
+
+        if (dispenseInput.tapId) {
+            data.tap = { connect: { id: dispenseInput.tapId } };
         }
 
-        if (clientId) {
-            data.client = { connect: { id: clientId } };
+        if (dispenseInput.clientId) {
+            data.client = { connect: { id: dispenseInput.clientId } };
         }
 
         const dispense = await this.prisma.dispense.create({

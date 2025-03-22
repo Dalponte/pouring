@@ -1,6 +1,7 @@
 import { Controller, Logger } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { QueueService } from '../queue/queue.service';
+import { TapEvent } from '../queue/types/tap-event.type';
 
 @Controller()
 export class MqttController {
@@ -9,7 +10,7 @@ export class MqttController {
     constructor(private readonly queueService: QueueService) { }
 
     @EventPattern('tap/events')
-    async handleTapEvents(@Payload() data: any) {
+    async handleTapEvents(@Payload() data: TapEvent) {
         this.logger.log(`Recebido evento: ${JSON.stringify(data)}`);
 
         if (data.type === 'dispense') {

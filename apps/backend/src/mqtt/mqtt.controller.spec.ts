@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MqttController } from './mqtt.controller';
 import { QueueService } from '../queue/queue.service';
+import { TapEvent } from '../queue/types/tap-event.type';
 
 describe('MqttController', () => {
     let controller: MqttController;
@@ -25,16 +26,12 @@ describe('MqttController', () => {
         queueService = module.get<QueueService>(QueueService);
     });
 
-    it('should be defined', () => {
-        expect(controller).toBeDefined();
-    });
-
-    describe('handleTapEvents', () => {
+    describe('tap/events', () => {
         it('should call addDispenseJob for dispense events', async () => {
-            const dispenseData = {
+            const dispenseData: TapEvent = {
                 type: 'dispense',
-                tapId: '19',
-                tapName: 'TAP-1',
+                tapId: 'tap-uuid-mock',
+                tagId: '9999',
                 meta: {
                     state: 'calculating',
                     flowCount: 1999,
@@ -42,6 +39,7 @@ describe('MqttController', () => {
                     flowVolumeFactor: 0.5,
                     rfid: '900000',
                 },
+                message: null,
                 timestamp: new Date().toISOString()
             };
 
@@ -50,10 +48,9 @@ describe('MqttController', () => {
         });
 
         it('should not call any job methods for unknown event types', async () => {
-            const unknownEventData = {
+            const unknownEventData: TapEvent = {
                 type: 'unknown',
-                tapId: '19',
-                tapName: 'TAP-1',
+                tapId: 'tap-uuid-mock',
                 meta: {},
                 timestamp: new Date().toISOString()
             };
