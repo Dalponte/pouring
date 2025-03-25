@@ -4,6 +4,24 @@ import mqtt from "mqtt";
 const MQTT_BROKER_URL = "ws://localhost:9001";
 const TOPIC = 'tap/events'
 
+// Define DispenseType enum
+export enum DispenseType {
+    AUTO_SERVICE = 'AUTO_SERVICE',
+    MAINTENANCE = 'MAINTENANCE',
+    ORDER = 'ORDER',
+    LOSS = 'LOSS',
+}
+
+// Define TapEvent interface
+export interface TapEvent {
+    tapId: string;
+    type: DispenseType;
+    tagId?: string;
+    meta?: Record<string, any>;
+    message?: string | null;
+    timestamp?: string;
+}
+
 export function useMQTT(topic: string) {
     const [messages, setMessages] = useState<string[]>([]);
     const [client, setClient] = useState<mqtt.MqttClient | null>(null);
@@ -35,11 +53,19 @@ export function useMQTT(topic: string) {
 
     const sendMessage = () => {
         if (client) {
+            const event: TapEvent = {
+                tapId: '38098105-7fc0-484f-824c-8b6dc38b06bf',
+                type: DispenseType.AUTO_SERVICE,
+                tagId: '28',
+                meta: { amount: 300 },
+                timestamp: new Date().toISOString()
+            };
+
             client.publish(
                 TOPIC,
-                JSON.stringify({ type: 'dispense', meta: { amount: 300 } }),
+                JSON.stringify(event),
                 { qos: 1 });
-            console.log("📡 Mensagem enviada pelo frontend!");
+            console.log("📡 Mensagem enviada pelo frontend!", event);
         }
     };
 

@@ -6,9 +6,9 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TapEvent } from '../types/tap-event.type';
 import { CreateDispenseInput } from '../../dispense/dto/create-dispense.input';
 
-@Processor('dispense')
-export class DispenseProcessor extends WorkerHost {
-    private readonly logger = new Logger(DispenseProcessor.name);
+@Processor('auto-service')
+export class AutoServiceProcessor extends WorkerHost {
+    private readonly logger = new Logger(AutoServiceProcessor.name);
 
     constructor(
         private prisma: PrismaService,
@@ -17,16 +17,33 @@ export class DispenseProcessor extends WorkerHost {
         super();
     }
 
+    //get the client id from the tag id
+    private async getClientId(tagId: string): Promise<string | null> {
+        const client = await this.prisma.client.findFirst({
+            where: {
+                tags: {
+                    some: {
+                        id: parseInt(tagId)
+                    }
+                }
+            }
+        });
+
+        return client ? client.id : null;
+    }
+
     async process(job: Job<TapEvent, any, string>) {
-        this.logger.debug(`Processor Dispense: ${JSON.stringify(job.data)}`);
+        this.logger.debug(`Processor AutoService: ${JSON.stringify(job.data)}`);
 
         const tapEvent = job.data;
 
-        // Convert TapEvent to CreateDispenseInput structure
+        const clientId = tapEvent.tagId ? await this.getClientId(tapEvent.tagId) : undefined
+
         const dispenseInput: CreateDispenseInput = {
             type: tapEvent.type,
             meta: tapEvent.meta || {},
-            tapId: tapEvent.tapId
+            tapId: tapEvent.tapId,
+            clientId,
         };
 
         const data: any = {

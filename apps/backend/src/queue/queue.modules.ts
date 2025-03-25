@@ -17,7 +17,7 @@ export { TapEvent } from './types/tap-event.type';
             inject: [ConfigService],
         }),
         BullModule.registerQueue({
-            name: 'dispense',
+            name: 'auto-service',
         }),
     ],
     providers: [QueueService],

@@ -21,5 +21,5 @@ export class CreateDispenseInput {
     @Field({ nullable: true })
     @IsUUID()
     @IsOptional()
-    clientId?: string;
+    clientId?: string | null;
 }

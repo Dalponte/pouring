@@ -6,12 +6,12 @@ import { QueueModule } from './queue/queue.modules';
 import { PrismaModule } from './prisma/prisma.module';
 import { DispenseModule } from './dispense/dispense.module';
 import { join } from 'path';
-import { DispenseProcessor } from './queue/processors/dispense.processor';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TapModule } from './tap/tap.module';
 import { TagModule } from './tag/tag.module';
 import { ClientModule } from './client/client.module';
+import { AutoServiceProcessor } from './queue/processors/auto-service.processor';
 
 @Module({
     imports: [
@@ -37,7 +37,7 @@ import { ClientModule } from './client/client.module';
         ClientModule,
     ],
     providers: [
-        DispenseProcessor,
+        AutoServiceProcessor,
     ],
 })
 export class AppModule { }

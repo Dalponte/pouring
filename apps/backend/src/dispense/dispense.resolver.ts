@@ -6,6 +6,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { Inject } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { CreateDispenseInput } from './dto/create-dispense.input';
+import { DispenseType } from '@prisma/client';
 
 @Resolver(of => Dispense)
 export class DispenseResolver {
@@ -26,9 +27,9 @@ export class DispenseResolver {
 
     @Mutation(returns => Dispense)
     async createDispense(
-        @Args('type') type: string,
+        @Args('type') type: DispenseType,
         @Args('meta', { type: () => GraphQLJSON }) meta: any,
-        @Args('tapId', { nullable: true }) tapId?: string,
+        @Args('tapId', { nullable: true }) tapId: string,
         @Args('clientId', { nullable: true }) clientId?: string,
     ): Promise<Dispense> {
         const input: CreateDispenseInput = { type, meta, tapId, clientId };

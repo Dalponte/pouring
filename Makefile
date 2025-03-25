@@ -21,7 +21,7 @@ setup-mqtt:
 
 # Project start
 dev-backend:
-	cd apps/backend && npm run start:dev
+	cd apps/backend && npm run dev
 
 dev-frontend:
 	cd apps/frontend && npm run dev
