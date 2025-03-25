@@ -27,7 +27,7 @@
                 "--runInBand",
                 "--watchAll=false",
                 "--config",
-                "${workspaceFolder}/apps/backend/test/jest-e2e.json",
+                "${workspaceFolder}/apps/backend/jest-e2e.json",
                 "${relativeFile}"
             ],
             "cwd": "${workspaceFolder}/apps/backend",
