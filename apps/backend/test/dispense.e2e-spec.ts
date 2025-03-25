@@ -8,6 +8,7 @@ describe('DispenseResolver (e2e)', () => {
   let app: INestApplication;
   let prismaService: PrismaService;
   let testClient;
+  let testTap;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -25,6 +26,14 @@ describe('DispenseResolver (e2e)', () => {
         meta: { type: 'test' }
       }
     });
+
+    // Create a test tap to use in tests
+    testTap = await prismaService.tap.create({
+      data: {
+        name: 'Test Tap',
+        meta: { location: 'test' }
+      }
+    });
   });
 
   beforeEach(async () => {
@@ -36,6 +45,9 @@ describe('DispenseResolver (e2e)', () => {
     await prismaService.client.delete({
       where: { id: testClient.id }
     });
+    await prismaService.tap.delete({
+      where: { id: testTap.id }
+    });
     await prismaService.$disconnect();
     await app.close();
   });
@@ -43,8 +55,8 @@ describe('DispenseResolver (e2e)', () => {
   it('should get all dispenses', async () => {
     await prismaService.dispense.createMany({
       data: [
-        { type: 'beer', meta: { brand: 'Bera' }, createdAt: new Date(), clientId: testClient.id },
-        { type: 'soda', meta: { brand: 'Cola' }, createdAt: new Date(), clientId: testClient.id },
+        { type: 'ORDER', meta: { brand: 'Bera' }, createdAt: new Date(), clientId: testClient.id, tapId: testTap.id },
+        { type: 'MAINTENANCE', meta: { brand: 'Cola' }, createdAt: new Date(), clientId: testClient.id, tapId: testTap.id },
       ],
     });
 
@@ -56,6 +68,7 @@ describe('DispenseResolver (e2e)', () => {
           meta
           createdAt
           clientId
+          tapId
         }
       }
     `;
@@ -67,20 +80,23 @@ describe('DispenseResolver (e2e)', () => {
 
     expect(response.body.data.getDispenses).toBeDefined();
     expect(response.body.data.getDispenses.length).toBe(2);
-    expect(response.body.data.getDispenses[0].type).toBe('beer');
+    expect(response.body.data.getDispenses[0].type).toBe('ORDER');
     expect(response.body.data.getDispenses[0].clientId).toBe(testClient.id);
-    expect(response.body.data.getDispenses[1].type).toBe('soda');
+    expect(response.body.data.getDispenses[0].tapId).toBe(testTap.id);
+    expect(response.body.data.getDispenses[1].type).toBe('MAINTENANCE');
     expect(response.body.data.getDispenses[1].clientId).toBe(testClient.id);
+    expect(response.body.data.getDispenses[1].tapId).toBe(testTap.id);
   });
 
   it('should get a dispense by id', async () => {
     // Create a test dispense record
     const dispense = await prismaService.dispense.create({
       data: {
-        type: 'beer',
+        type: 'ORDER',
         meta: { brand: 'Bera' },
         createdAt: new Date(),
-        clientId: testClient.id
+        clientId: testClient.id,
+        tapId: testTap.id
       },
     });
 
@@ -92,6 +108,7 @@ describe('DispenseResolver (e2e)', () => {
           meta
           createdAt
           clientId
+          tapId
         }
       }
     `;
@@ -103,23 +120,26 @@ describe('DispenseResolver (e2e)', () => {
 
     expect(response.body.data.getDispense).toBeDefined();
     expect(response.body.data.getDispense.id).toBe(dispense.id.toString());
-    expect(response.body.data.getDispense.type).toBe('beer');
+    expect(response.body.data.getDispense.type).toBe('ORDER');
     expect(response.body.data.getDispense.clientId).toBe(testClient.id);
+    expect(response.body.data.getDispense.tapId).toBe(testTap.id);
   });
 
   it('should create a new dispense', async () => {
     const mutation = `
       mutation {
         createDispense(
-          type: "beer",
+          type: "ORDER",
           meta: { brand: "Bera", volume: 0.5 },
-          clientId: "${testClient.id}"
+          clientId: "${testClient.id}",
+          tapId: "${testTap.id}"
         ) {
           id
           type
           meta
           createdAt
           clientId
+          tapId
         }
       }
     `;
@@ -130,8 +150,9 @@ describe('DispenseResolver (e2e)', () => {
       .expect(200);
 
     expect(response.body.data.createDispense).toBeDefined();
-    expect(response.body.data.createDispense.type).toBe('beer');
+    expect(response.body.data.createDispense.type).toBe('ORDER');
     expect(response.body.data.createDispense.meta).toEqual({ brand: 'Bera', volume: 0.5 });
     expect(response.body.data.createDispense.clientId).toBe(testClient.id);
+    expect(response.body.data.createDispense.tapId).toBe(testTap.id);
   });
 });
