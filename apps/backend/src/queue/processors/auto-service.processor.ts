@@ -6,6 +6,11 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TapEvent } from '../types/tap-event.type';
 import { CreateDispenseInput } from '../../dispense/dto/create-dispense.input';
 
+type AutoServiceProcessorResult = {
+    processed: boolean;
+    dispenseId: string;
+};
+
 @Processor('auto-service')
 export class AutoServiceProcessor extends WorkerHost {
     private readonly logger = new Logger(AutoServiceProcessor.name);
@@ -17,7 +22,6 @@ export class AutoServiceProcessor extends WorkerHost {
         super();
     }
 
-    //get the client id from the tag id
     private async getClientId(tagId: string): Promise<string | null> {
         const client = await this.prisma.client.findFirst({
             where: {
@@ -32,7 +36,7 @@ export class AutoServiceProcessor extends WorkerHost {
         return client ? client.id : null;
     }
 
-    async process(job: Job<TapEvent, any, string>) {
+    async process(job: Job<TapEvent, AutoServiceProcessorResult, string>) {
         this.logger.debug(`Processor AutoService: ${JSON.stringify(job.data)}`);
 
         const tapEvent = job.data;

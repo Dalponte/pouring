@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MqttModule } from './mqtt/mqtt.module';
 import { QueueModule } from './queue/queue.modules';
@@ -17,16 +17,20 @@ import { AutoServiceProcessor } from './queue/processors/auto-service.processor'
     imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         EventEmitterModule.forRoot(),
-        GraphQLModule.forRoot<ApolloDriverConfig>({
+        GraphQLModule.forRootAsync<ApolloDriverConfig>({
             driver: ApolloDriver,
-            autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-            sortSchema: true,
-            playground: true,
-            subscriptions: {
-                'graphql-ws': true,
-                'subscriptions-transport-ws': true,
-            },
-            installSubscriptionHandlers: true,
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => ({
+                autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+                sortSchema: true,
+                installSubscriptionHandlers: true,
+                playground: configService.get('ENABLE_GRAPHQL_PLAYGROUND') === 'true',
+                subscriptions: {
+                    'graphql-ws': true,
+                    'subscriptions-transport-ws': true,
+                },
+            }),
+            inject: [ConfigService],
         }),
         MqttModule,
         QueueModule,
