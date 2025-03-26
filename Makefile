@@ -23,8 +23,8 @@ setup-mqtt:
 dev-backend:
 	cd apps/backend && npm run dev
 
-dev-frontend:
-	cd apps/frontend && npm run dev
+dev-taps:
+	cd apps/taps && npm run dev
 
 # Database commands
 db-migrate:
@@ -41,8 +41,8 @@ db-reset-and-migrate:
 
 # Install dependencies
 install:
-	cd apps/backend && npm install
-	cd apps/frontend && npm install
+	cd apps/backend && pnpm install
+	cd apps/taps && pnpm install
 
 # Git Flow commands
 gf-init:
@@ -79,10 +79,10 @@ help:
 	@echo "  docker-logs     - View container logs"
 	@echo "  docker-build    - Rebuild containers"
 	@echo "  dev-backend     - Run backend in development mode"
-	@echo "  dev-frontend    - Run frontend in development mode"
+	@echo "  dev-taps    	 - Run Taps simulator in development mode"
 	@echo "  db-migrate      - Run database migrations"
 	@echo "  db-generate     - Generate database migrations"
 	@echo "  db-reset        - Reset database"
 	@echo "  install         - Install dependencies"
 
-.PHONY: docker-up docker-down docker-logs docker-build dev-backend dev-frontend db-migrate db-generate db-reset db-reset-and-migrate install git-flow-init git-flow-feature-start git-flow-feature-finish git-flow-release-start git-flow-release-finish git-flow-hotfix-start git-flow-hotfix-finish help
+.PHONY: docker-up docker-down docker-logs docker-build dev-backend dev-taps db-migrate db-generate db-reset db-reset-and-migrate install git-flow-init git-flow-feature-start git-flow-feature-finish git-flow-release-start git-flow-release-finish git-flow-hotfix-start git-flow-hotfix-finish help

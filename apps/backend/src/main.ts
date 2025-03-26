@@ -23,7 +23,7 @@ async function bootstrap() {
 
   // Start all microservices and then listen on HTTP port
   await app.startAllMicroservices();
-  await app.listen(3000);
+  await app.listen(9000);
 
   console.log(`Application is running on: ${await app.getUrl()}`);
   console.log('MQTT Microservice is connected');
