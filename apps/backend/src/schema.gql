@@ -78,6 +78,9 @@ type Query {
 type Subscription {
   dispenseAdded: Dispense!
   tapAdded: Tap!
+  tapDeleted: Tap!
+  tapHardDeleted: Tap!
+  tapRestored: Tap!
   tapUpdated: Tap!
 }
 

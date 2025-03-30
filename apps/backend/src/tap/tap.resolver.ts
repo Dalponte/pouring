@@ -78,4 +78,19 @@ export class TapResolver {
     tapUpdated() {
         return this.pubSub.asyncIterableIterator('tapUpdated');
     }
+
+    @Subscription(returns => Tap)
+    tapDeleted() {
+        return this.pubSub.asyncIterableIterator('tapDeleted');
+    }
+
+    @Subscription(returns => Tap)
+    tapRestored() {
+        return this.pubSub.asyncIterableIterator('tapRestored');
+    }
+
+    @Subscription(returns => Tap)
+    tapHardDeleted() {
+        return this.pubSub.asyncIterableIterator('tapHardDeleted');
+    }
 }
