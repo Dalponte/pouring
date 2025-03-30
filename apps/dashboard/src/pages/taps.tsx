@@ -1,12 +1,22 @@
-import React from "react"
+import { useTaps } from "@/hooks/useTaps";
 
 export function TapsPage() {
+    const { taps, loading, error, refetch } = useTaps(true); // includeDeleted=true to show all taps
+
     return (
-        <div className="space-y-4">
-            <h1 className="text-2xl font-bold">Taps</h1>
-            <div className="min-h-[70vh] rounded-xl bg-muted/50 flex items-center justify-center">
-                <p className="text-muted-foreground">Taps page content will go here</p>
-            </div>
+        <div>
+            {loading && <p>Loading...</p>}
+            {error && <p>Error: {error.message}</p>}
+
+            {taps && taps.length > 0 ? (
+                JSON.stringify(taps, null, 2)
+            ) : (
+                <p>No taps found.</p>
+            )}
+
+            <br />
+            <br />
+            <button onClick={() => refetch()}>Refetch Taps</button>
         </div>
-    )
+    );
 }

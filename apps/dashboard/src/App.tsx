@@ -15,6 +15,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom"
 import { ClientsPage } from "@/pages/clients"
 import { TapsPage } from "@/pages/taps"
 import { HomePage } from "@/pages/home"
+import { GraphQLProvider } from "@/components/providers/graphql-provider"
 
 function MainLayout() {
   const location = useLocation()
@@ -59,9 +60,11 @@ function MainLayout() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <MainLayout />
-    </BrowserRouter>
+    <GraphQLProvider>
+      <BrowserRouter>
+        <MainLayout />
+      </BrowserRouter>
+    </GraphQLProvider>
   )
 }
 
