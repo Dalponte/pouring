@@ -11,8 +11,23 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom"
+import { ClientsPage } from "@/pages/clients"
+import { TapsPage } from "@/pages/taps"
+import { HomePage } from "@/pages/home"
 
-function App() {
+function MainLayout() {
+  const location = useLocation()
+
+  // Get page title based on current path
+  const getPageTitle = () => {
+    const path = location.pathname
+    if (path === "/") return "Dashboard"
+    if (path === "/clients") return "Clients"
+    if (path === "/taps") return "Taps"
+    return "Dashboard"
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -24,22 +39,29 @@ function App() {
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
                 <BreadcrumbLink href="#">
-                  <span className="text-muted-foreground">Dashboard</span>
+                  <span className="text-muted-foreground">{getPageTitle()}</span>
                 </BreadcrumbLink>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/clients" element={<ClientsPage />} />
+            <Route path="/taps" element={<TapsPage />} />
+          </Routes>
         </div>
       </SidebarInset>
     </SidebarProvider>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <MainLayout />
+    </BrowserRouter>
   )
 }
 
