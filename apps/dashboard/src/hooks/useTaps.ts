@@ -51,9 +51,11 @@ export function useTaps(includeDeleted = false) {
         refetchQueries: [{ query: GET_TAPS, variables: { includeDeleted } }],
     });
 
-    const [updateTapMutation] = useMutation(UPDATE_TAP);
+    const [updateTapMutation] = useMutation(UPDATE_TAP, {
+        refetchQueries: [{ query: GET_TAPS, variables: { includeDeleted } }],
+    });
 
-    const [softDeleteTapMutation] = useMutation(SOFT_DELETE_TAP);
+    const [deleteTapMutation] = useMutation(SOFT_DELETE_TAP);
 
     const [restoreTapMutation] = useMutation(RESTORE_TAP);
 
@@ -71,8 +73,8 @@ export function useTaps(includeDeleted = false) {
         return result.data.updateTap;
     };
 
-    const softDeleteTap = async (id: string) => {
-        const result = await softDeleteTapMutation({ variables: { id } });
+    const deleteTap = async (id: string) => {
+        const result = await deleteTapMutation({ variables: { id } });
         return result.data.softDeleteTap;
     };
 
@@ -93,7 +95,7 @@ export function useTaps(includeDeleted = false) {
         refetch,
         createTap,
         updateTap,
-        softDeleteTap,
+        deleteTap,
         restoreTap,
         hardDeleteTap,
     };
