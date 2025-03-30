@@ -46,3 +46,30 @@ export const TAP_UPDATED = gql`
     }
   }
 `;
+
+export const TAP_DELETED = gql`
+  subscription TapDeleted {
+    tapDeleted {
+      id
+      name
+      meta
+      deleted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const TAP_RESTORED = gql`
+  subscription TapRestored {
+    tapRestored {
+      id
+      name
+      meta
+      deleted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+

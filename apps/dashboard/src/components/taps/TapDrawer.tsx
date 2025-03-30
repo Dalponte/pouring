@@ -37,22 +37,36 @@ export function TapDrawer({
     const [metaJson, setMetaJson] = useState<string>('{}');
     const [jsonError, setJsonError] = useState<string | null>(null);
 
-    // Initialize form data when tap changes
+    // Initialize form data when drawer is opened
     useEffect(() => {
-        if (tap) {
-            setFormData({
-                ...tap
-            });
-            setMetaJson(JSON.stringify(tap.meta || {}, null, 2));
-        } else if (isCreating) {
+        if (open) {
+            if (tap) {
+                setFormData({
+                    ...tap
+                });
+                setMetaJson(JSON.stringify(tap.meta || {}, null, 2));
+            } else if (isCreating) {
+                setFormData({
+                    name: "",
+                    meta: {},
+                    deleted: false
+                });
+                setMetaJson('{}');
+            }
+        }
+
+        // Cleanup function (componentWillUnmount equivalent)
+        return () => {
+            // This runs when component is unmounted or dependencies change
             setFormData({
                 name: "",
                 meta: {},
                 deleted: false
             });
             setMetaJson('{}');
-        }
-    }, [tap, isCreating]);
+            setJsonError(null);
+        };
+    }, [open, tap, isCreating]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
