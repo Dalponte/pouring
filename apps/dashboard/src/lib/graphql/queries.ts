@@ -2,8 +2,8 @@ import { gql } from "@apollo/client";
 
 // Client Queries
 export const GET_CLIENTS = gql`
-  query GetClients($includeDeleted: Boolean) {
-    getClients(includeDeleted: $includeDeleted) {
+  query GetClients {
+    getClients {
       id
       name
       meta

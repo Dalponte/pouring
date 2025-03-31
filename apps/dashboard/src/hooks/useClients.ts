@@ -5,9 +5,9 @@ import { CLIENT_ADDED, CLIENT_UPDATED, CLIENT_DELETED } from "@/lib/graphql/subs
 import { Client } from "@/lib/types/graphql";
 import { useEffect } from "react";
 
-export function useClients(includeDeleted = false) {
+export function useClients() {
     const { data, loading, error, refetch } = useQuery(GET_CLIENTS, {
-        variables: { includeDeleted },
+        variables: {},
         fetchPolicy: "cache-and-network",
     });
 
@@ -24,11 +24,11 @@ export function useClients(includeDeleted = false) {
     }, [addedData, updatedData, deletedData, refetch]);
 
     const [createClientMutation] = useMutation(CREATE_CLIENT, {
-        refetchQueries: [{ query: GET_CLIENTS, variables: { includeDeleted } }],
+        refetchQueries: [{ query: GET_CLIENTS }],
     });
 
     const [updateClientMutation] = useMutation(UPDATE_CLIENT, {
-        refetchQueries: [{ query: GET_CLIENTS, variables: { includeDeleted } }],
+        refetchQueries: [{ query: GET_CLIENTS }],
     });
 
     const [deleteClientMutation] = useMutation(DELETE_CLIENT);
@@ -74,9 +74,9 @@ export function useClients(includeDeleted = false) {
     };
 }
 
-export function useClient(id: string, includeDeleted = false) {
+export function useClient(id: string) {
     const { data, loading, error, refetch } = useQuery(GET_CLIENT, {
-        variables: { id, includeDeleted },
+        variables: { id },
         skip: !id,
     });
 
