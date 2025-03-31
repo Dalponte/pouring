@@ -7,9 +7,10 @@ interface ClientListProps {
     onEdit?: (client: Client) => void;
     onDelete?: (client: Client) => void;
     onCreate?: () => void;
+    onRowSelect?: (client: Client | null) => void;
 }
 
-export function ClientList({ clients, onEdit, onDelete, onCreate }: ClientListProps) {
+export function ClientList({ clients, onEdit, onDelete, onCreate, onRowSelect }: ClientListProps) {
     const columns: ColumnDef<Client>[] = [
         {
             accessorKey: "name",
@@ -46,6 +47,7 @@ export function ClientList({ clients, onEdit, onDelete, onCreate }: ClientListPr
             onCreate={onCreate}
             onEdit={onEdit}
             onDelete={onDelete}
+            onRowSelect={onRowSelect}
             filterColumn="name"
         />
     );

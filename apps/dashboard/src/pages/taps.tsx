@@ -89,7 +89,7 @@ export function TapsPage() {
     };
 
     return (
-        <div className="container mx-auto py-6">
+        <div className="container mx-auto gap-4 p-4">
             {loading && <p className="text-center py-4">Loading taps data...</p>}
             {error && <p className="text-red-500 py-4">Error: {error.message}</p>}
 

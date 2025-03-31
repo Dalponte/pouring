@@ -9,6 +9,7 @@ import {
     getSortedRowModel,
     ColumnFiltersState,
     getFilteredRowModel,
+    Row,
 } from "@tanstack/react-table";
 
 import {
@@ -30,6 +31,7 @@ interface DataTableProps<TData, TValue> {
     onDelete?: (row: TData) => void;
     onCreate?: () => void;
     filterColumn?: string;
+    onRowSelect?: (row: TData | null) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -39,9 +41,25 @@ export function DataTable<TData, TValue>({
     onDelete,
     onCreate,
     filterColumn,
+    onRowSelect,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+    const [selectedRowId, setSelectedRowId] = React.useState<string | null>(null);
+
+    const handleRowClick = React.useCallback(
+        (row: Row<TData>) => {
+            if (selectedRowId === row.id) {
+                // Deselect if clicking the same row
+                setSelectedRowId(null);
+                onRowSelect && onRowSelect(null);
+            } else {
+                setSelectedRowId(row.id);
+                onRowSelect && onRowSelect(row.original);
+            }
+        },
+        [selectedRowId, onRowSelect]
+    );
 
     const columnsWithActions = React.useMemo(() => {
         if (!onEdit && !onDelete) return columns;
@@ -148,6 +166,9 @@ export function DataTable<TData, TValue>({
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    className={`cursor-pointer ${selectedRowId === row.id ? "bg-muted" : ""
+                                        }`}
+                                    onClick={() => handleRowClick(row)}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>

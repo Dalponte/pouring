@@ -4,12 +4,15 @@ import { Client } from "@/lib/types/graphql"
 import { ClientList } from "@/components/clients/ClientList"
 import { ClientDrawer } from "@/components/clients/ClientDrawer"
 import { ClientDeleteAlert } from "@/components/clients/ClientDeleteAlert"
+import { ClientDetails } from "@/components/clients/ClientDetails"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 
 export function ClientsPage() {
     const { clients, loading, error, createClient, updateClient, deleteClient } = useClients()
     const [isCreatingClient, setIsCreatingClient] = useState(false)
     const [editingClient, setEditingClient] = useState<Client | null>(null)
     const [deletingClient, setDeletingClient] = useState<Client | null>(null)
+    const [selectedClient, setSelectedClient] = useState<Client | null>(null)
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [deleteAlertOpen, setDeleteAlertOpen] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -31,6 +34,10 @@ export function ClientsPage() {
         setDeleteAlertOpen(true)
     }
 
+    const handleRowSelect = (client: Client | null) => {
+        setSelectedClient(client)
+    }
+
     const handleConfirmDelete = async (client: Client) => {
         if (isSubmitting) return
 
@@ -40,6 +47,11 @@ export function ClientsPage() {
             setDeleteAlertOpen(false)
             await deleteClient(client.id)
             setDeletingClient(null)
+
+            // Reset selected client if the deleted client was selected
+            if (selectedClient && selectedClient.id === client.id) {
+                setSelectedClient(null)
+            }
         } catch (error) {
             console.error("Error deleting client:", error)
             setDeletingClient(null)
@@ -63,6 +75,11 @@ export function ClientsPage() {
                     clientData.name,
                     clientData.meta
                 )
+
+                // Update selected client if it was the one being edited
+                if (selectedClient && selectedClient.id === clientData.id) {
+                    setSelectedClient(clientData)
+                }
             }
 
             setDrawerOpen(false)
@@ -86,21 +103,30 @@ export function ClientsPage() {
     }
 
     return (
-        <div className="container mx-auto py-6 space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Clients</h1>
-            </div>
-
+        <div className="container mx-auto w-full min-h-full flex flex-col">
             {loading && <p className="text-center py-4">Loading clients data...</p>}
             {error && <p className="text-red-500 py-4">Error: {error.message}</p>}
 
             {!loading && !error && clients && (
-                <ClientList
-                    clients={clients}
-                    onCreate={handleCreateClient}
-                    onEdit={handleEditClient}
-                    onDelete={handleDeleteClient}
-                />
+                <ResizablePanelGroup direction="vertical">
+                    <ResizablePanel defaultSize={70} minSize={30}>
+                        <div className="p-4 h-full">
+                            <ClientList
+                                clients={clients}
+                                onCreate={handleCreateClient}
+                                onEdit={handleEditClient}
+                                onDelete={handleDeleteClient}
+                                onRowSelect={handleRowSelect}
+                            />
+                        </div>
+                    </ResizablePanel>
+                    <ResizableHandle />
+                    <ResizablePanel defaultSize={30} minSize={20}>
+                        <div className="p-4 h-full">
+                            <ClientDetails client={selectedClient} />
+                        </div>
+                    </ResizablePanel>
+                </ResizablePanelGroup>
             )}
 
             {/* Only render drawer when it's open */}
