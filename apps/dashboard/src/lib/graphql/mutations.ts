@@ -129,8 +129,8 @@ export const DELETE_TAG = gql`
 
 // Tag-Client relation mutations
 export const ADD_TAG_TO_CLIENT = gql`
-  mutation AddTagToClient($clientId: String!, $tagId: Int!) {
-    addTagToClient(clientId: $clientId, tagId: $tagId) {
+  mutation AddTagToClient($clientId: String!, $code: String!) {
+    addTagToClientByCode(clientId: $clientId, code: $code) {
       id
       name
       tags {
@@ -143,8 +143,8 @@ export const ADD_TAG_TO_CLIENT = gql`
 `;
 
 export const REMOVE_TAG_FROM_CLIENT = gql`
-  mutation RemoveTagFromClient($clientId: String!, $tagId: Int!) {
-    removeTagFromClient(clientId: $clientId, tagId: $tagId) {
+  mutation RemoveTagFromClient($clientId: String!, $code: String!) {
+    removeTagFromClientByCode(clientId: $clientId, code: $code) {
       id
       name
       tags {

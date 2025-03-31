@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { GET_CLIENTS, GET_CLIENT } from "@/lib/graphql/queries";
-import { CREATE_CLIENT, UPDATE_CLIENT, DELETE_CLIENT } from "@/lib/graphql/mutations";
+import { CREATE_CLIENT, UPDATE_CLIENT, DELETE_CLIENT, REMOVE_TAG_FROM_CLIENT, ADD_TAG_TO_CLIENT } from "@/lib/graphql/mutations";
 import { CLIENT_ADDED, CLIENT_UPDATED, CLIENT_DELETED } from "@/lib/graphql/subscriptions";
 import { Client } from "@/lib/types/graphql";
 import { useEffect } from "react";
@@ -33,6 +33,14 @@ export function useClients() {
 
     const [deleteClientMutation] = useMutation(DELETE_CLIENT);
 
+    const [removeTagFromClientMutation] = useMutation(REMOVE_TAG_FROM_CLIENT, {
+        refetchQueries: [{ query: GET_CLIENTS }, { query: GET_CLIENT }],
+    });
+
+    const [addTagToClientMutation] = useMutation(ADD_TAG_TO_CLIENT, {
+        refetchQueries: [{ query: GET_CLIENTS }, { query: GET_CLIENT }],
+    });
+
     const createClient = async (name: string, meta?: any) => {
         const result = await createClientMutation({
             variables: {
@@ -63,6 +71,20 @@ export function useClients() {
         return result.data.deleteClient;
     };
 
+    const removeTagFromClient = async (clientId: string, code: string) => {
+        const result = await removeTagFromClientMutation({
+            variables: { clientId, code }
+        });
+        return result.data.removeTagFromClientByCode;
+    };
+
+    const addTagToClient = async (clientId: string, code: string) => {
+        const result = await addTagToClientMutation({
+            variables: { clientId, code }
+        });
+        return result.data.addTagToClientByCode;
+    };
+
     return {
         clients: data?.getClients as Client[] || [],
         loading,
@@ -71,6 +93,8 @@ export function useClients() {
         createClient,
         updateClient,
         deleteClient,
+        removeTagFromClient,
+        addTagToClient,
     };
 }
 
@@ -83,20 +107,46 @@ export function useClient(id: string) {
     // Subscribe to client updates for this specific client
     const { data: updatedData } = useSubscription(CLIENT_UPDATED);
     const { data: deletedData } = useSubscription(CLIENT_DELETED);
+    const { data: addedData } = useSubscription(CLIENT_ADDED);
 
     useEffect(() => {
         if (
             (updatedData?.clientUpdated && updatedData.clientUpdated.id === id) ||
-            (deletedData?.clientDeleted && deletedData.clientDeleted.id === id)
+            (deletedData?.clientDeleted && deletedData.clientDeleted.id === id) ||
+            (addedData?.clientAdded && addedData.clientAdded.id === id)
         ) {
             refetch();
         }
-    }, [updatedData, deletedData, id, refetch]);
+    }, [updatedData, deletedData, addedData, id, refetch]);
+
+    const [removeTagFromClientMutation] = useMutation(REMOVE_TAG_FROM_CLIENT, {
+        refetchQueries: [{ query: GET_CLIENT, variables: { id } }],
+    });
+
+    const [addTagToClientMutation] = useMutation(ADD_TAG_TO_CLIENT, {
+        refetchQueries: [{ query: GET_CLIENT, variables: { id } }],
+    });
+
+    const removeTagFromClient = async (clientId: string, code: string) => {
+        const result = await removeTagFromClientMutation({
+            variables: { clientId, code }
+        });
+        return result.data.removeTagFromClientByCode;
+    };
+
+    const addTagToClient = async (clientId: string, code: string) => {
+        const result = await addTagToClientMutation({
+            variables: { clientId, code }
+        });
+        return result.data.addTagToClientByCode;
+    };
 
     return {
         client: data?.getClient as Client,
         loading,
         error,
         refetch,
+        removeTagFromClient,
+        addTagToClient,
     };
 }
