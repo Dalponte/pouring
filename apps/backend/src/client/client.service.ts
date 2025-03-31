@@ -74,34 +74,60 @@ export class ClientService {
         return result as Client;
     }
 
-    async addTagToClient(clientId: string, tagId: number): Promise<Client> {
+    async addTagToClientByCode(clientId: string, code: string): Promise<Client> {
         const client = await this.getClient(clientId);
         if (!client) {
             throw new Error(`Client with ID ${clientId} not found or is deleted`);
         }
 
+        // Find the tag by code
+        const tag = await this.prisma.tag.findFirst({
+            where: {
+                code: code,
+                deletedAt: null // Only non-deleted tags
+            }
+        });
+
+        if (!tag) {
+            throw new Error(`Tag with code ${code} not found`);
+        }
+
+        // Connect the tag to the client
         return this.prisma.client.update({
             where: { id: clientId },
             data: {
                 tags: {
-                    connect: { id: tagId }
+                    connect: { id: tag.id }
                 }
             },
             include: { tags: true }
         }) as unknown as Client;
     }
 
-    async removeTagFromClient(clientId: string, tagId: number): Promise<Client> {
+    async removeTagFromClientByCode(clientId: string, code: string): Promise<Client> {
         const client = await this.getClient(clientId);
         if (!client) {
             throw new Error(`Client with ID ${clientId} not found or is deleted`);
         }
 
+        // Find the tag by code
+        const tag = await this.prisma.tag.findFirst({
+            where: {
+                code: code,
+                deletedAt: null // Only non-deleted tags
+            }
+        });
+
+        if (!tag) {
+            throw new Error(`Tag with code ${code} not found`);
+        }
+
+        // Disconnect the tag from the client
         return this.prisma.client.update({
             where: { id: clientId },
             data: {
                 tags: {
-                    disconnect: { id: tagId }
+                    disconnect: { id: tag.id }
                 }
             },
             include: { tags: true }

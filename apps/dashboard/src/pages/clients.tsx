@@ -109,7 +109,7 @@ export function ClientsPage() {
 
             {!loading && !error && clients && (
                 <ResizablePanelGroup direction="vertical">
-                    <ResizablePanel defaultSize={70} minSize={30}>
+                    <ResizablePanel defaultSize={60} minSize={30}>
                         <div className="p-4 h-full">
                             <ClientList
                                 clients={clients}
@@ -121,7 +121,7 @@ export function ClientsPage() {
                         </div>
                     </ResizablePanel>
                     <ResizableHandle />
-                    <ResizablePanel defaultSize={30} minSize={20}>
+                    <ResizablePanel defaultSize={40} minSize={20}>
                         <div className="p-4 h-full">
                             <ClientDetails client={selectedClient} />
                         </div>

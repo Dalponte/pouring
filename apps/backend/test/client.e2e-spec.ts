@@ -270,7 +270,7 @@ describe('ClientResolver (e2e)', () => {
   it('should add tags to client', async () => {
     let addTagMutation = `
       mutation {
-        addTagToClient(clientId: "${clientId}", tagId: ${tagIds[0]}) {
+        addTagToClientByCode(clientId: "${clientId}", code: "TAG1") {
           id
           name
           tags {
@@ -288,13 +288,13 @@ describe('ClientResolver (e2e)', () => {
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.data.addTagToClient.tags).toHaveLength(1);
-    expect(response.body.data.addTagToClient.tags[0].id).toBe(tagIds[0]);
+    expect(response.body.data.addTagToClientByCode.tags).toHaveLength(1);
+    expect(response.body.data.addTagToClientByCode.tags[0].code).toBe('TAG1');
 
     // Add second tag
     addTagMutation = `
       mutation {
-        addTagToClient(clientId: "${clientId}", tagId: ${tagIds[1]}) {
+        addTagToClientByCode(clientId: "${clientId}", code: "TAG2") {
           id
           name
           tags {
@@ -312,8 +312,8 @@ describe('ClientResolver (e2e)', () => {
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.data.addTagToClient.tags).toHaveLength(2);
-    expect(response.body.data.addTagToClient.tags[1].id).toBe(tagIds[1]);
+    expect(response.body.data.addTagToClientByCode.tags).toHaveLength(2);
+    expect(response.body.data.addTagToClientByCode.tags[1].code).toBe('TAG2');
   });
 
   it('should get client with tags', async () => {
@@ -344,7 +344,7 @@ describe('ClientResolver (e2e)', () => {
   it('should remove a tag from client', async () => {
     const removeTagMutation = `
       mutation {
-        removeTagFromClient(clientId: "${clientId}", tagId: ${tagIds[0]}) {
+        removeTagFromClientByCode(clientId: "${clientId}", code: "TAG1") {
           id
           name
           tags {
@@ -362,7 +362,8 @@ describe('ClientResolver (e2e)', () => {
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.data.removeTagFromClient.tags).toHaveLength(1);
-    expect(response.body.data.removeTagFromClient.tags[0].id).toBe(tagIds[1]);
+    expect(response.body.data.removeTagFromClientByCode.tags).toHaveLength(1);
+    expect(response.body.data.removeTagFromClientByCode.tags[0].code).toBe('TAG2');
   });
+
 });

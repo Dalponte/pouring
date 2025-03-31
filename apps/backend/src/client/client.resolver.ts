@@ -46,19 +46,19 @@ export class ClientResolver {
     }
 
     @Mutation(returns => Client)
-    async addTagToClient(
+    async addTagToClientByCode(
         @Args('clientId') clientId: string,
-        @Args('tagId', { type: () => Int }) tagId: number,
+        @Args('code') code: string,
     ): Promise<Client> {
-        return this.clientService.addTagToClient(clientId, tagId);
+        return this.clientService.addTagToClientByCode(clientId, code);
     }
 
     @Mutation(returns => Client)
-    async removeTagFromClient(
+    async removeTagFromClientByCode(
         @Args('clientId') clientId: string,
-        @Args('tagId', { type: () => Int }) tagId: number,
+        @Args('code') code: string,
     ): Promise<Client> {
-        return this.clientService.removeTagFromClient(clientId, tagId);
+        return this.clientService.removeTagFromClientByCode(clientId, code);
     }
 
     @Subscription(returns => Client)

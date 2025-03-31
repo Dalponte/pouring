@@ -15,10 +15,6 @@ interface ClientDetailsProps {
 }
 
 export function ClientDetails({ client: initialClient }: ClientDetailsProps) {
-    const [isAddingTag, setIsAddingTag] = useState(false);
-    const { tags: allTags } = useTags();
-
-    // Use the useClient hook to get reactive data if we have a client ID
     const {
         client: reactiveClient,
         loading,
@@ -88,15 +84,12 @@ export function ClientDetails({ client: initialClient }: ClientDetailsProps) {
     const handleAddTag = async (tagCode: string) => {
         if (!client) return;
 
-        setIsAddingTag(true);
         try {
             await addTagToClient(client.id, tagCode);
             toast.success("Tag added successfully");
         } catch (error) {
             console.error("Error adding tag:", error);
             toast.error("Failed to add tag");
-        } finally {
-            setIsAddingTag(false);
         }
     };
 

@@ -47,7 +47,7 @@ scalar JSON
 
 type Mutation {
   addClientToTag(clientId: String!, tagId: Int!): Tag!
-  addTagToClient(clientId: String!, tagId: Int!): Client!
+  addTagToClientByCode(clientId: String!, code: String!): Client!
   createClient(createClientInput: CreateClientInput!): Client!
   createDispense(clientId: String, meta: JSON!, tapId: String, type: String!): Dispense!
   createTag(createTagInput: CreateTagInput!): Tag!
@@ -56,7 +56,7 @@ type Mutation {
   deleteTag(id: Int!): Tag!
   hardDeleteTap(id: String!): Tap!
   removeClientFromTag(clientId: String!, tagId: Int!): Tag!
-  removeTagFromClient(clientId: String!, tagId: Int!): Client!
+  removeTagFromClientByCode(clientId: String!, code: String!): Client!
   restoreTap(id: String!): Tap!
   softDeleteTap(id: String!): Tap!
   updateClient(id: String!, updateClientInput: UpdateClientInput!): Client!
