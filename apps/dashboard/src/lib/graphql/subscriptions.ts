@@ -73,3 +73,52 @@ export const TAP_RESTORED = gql`
   }
 `;
 
+export const CLIENT_ADDED = gql`
+  subscription ClientAdded {
+    clientAdded {
+      id
+      name
+      meta
+      createdAt
+      updatedAt
+      deletedAt
+      tags {
+        id
+        code
+        reference
+      }
+    }
+  }
+`;
+
+export const CLIENT_UPDATED = gql`
+  subscription ClientUpdated {
+    clientUpdated {
+      id
+      name
+      meta
+      createdAt
+      updatedAt
+      deletedAt
+      tags {
+        id
+        code
+        reference
+      }
+    }
+  }
+`;
+
+export const CLIENT_DELETED = gql`
+  subscription ClientDeleted {
+    clientDeleted {
+      id
+      name
+      meta
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
