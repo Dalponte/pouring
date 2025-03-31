@@ -8,25 +8,21 @@ import { UpdateClientInput } from './dto/update-client.input';
 export class ClientService {
     constructor(private prisma: PrismaService) { }
 
-    async getClient(id: string, includeDeleted: boolean = false): Promise<Client | null> {
-        const where = { id };
-        if (!includeDeleted) {
-            Object.assign(where, { deletedAt: null });
-        }
-
+    async getClient(id: string): Promise<Client | null> {
         const result = await this.prisma.client.findFirst({
-            where,
+            where: {
+                id,
+                deletedAt: null
+            },
             include: { tags: true }
         });
 
         return result as Client | null;
     }
 
-    async getAllClients(includeDeleted: boolean = false): Promise<Client[]> {
-        const where = includeDeleted ? {} : { deletedAt: null };
-
+    async getAllClients(): Promise<Client[]> {
         const results = await this.prisma.client.findMany({
-            where,
+            where: { deletedAt: null },
             include: { tags: true }
         });
 

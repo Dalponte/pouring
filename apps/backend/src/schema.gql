@@ -66,7 +66,7 @@ type Mutation {
 
 type Query {
   getClient(id: String!): Client
-  getClients(includeDeleted: Boolean): [Client!]!
+  getClients: [Client!]!
   getDispense(id: Float!): Dispense!
   getDispenses: [Dispense!]!
   getTag(id: Int!): Tag
@@ -76,6 +76,7 @@ type Query {
 }
 
 type Subscription {
+  clientDeleted: Client!
   dispenseAdded: Dispense!
   tapAdded: Tap!
   tapDeleted: Tap!

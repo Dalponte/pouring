@@ -1,8 +1,11 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 import { ClientService } from './client.service';
 import { Client } from './client.model';
 import { CreateClientInput } from './dto/create-client.input';
 import { UpdateClientInput } from './dto/update-client.input';
+import { PubSub } from 'graphql-subscriptions';
+
+const pubSub = new PubSub();
 
 @Resolver(of => Client)
 export class ClientResolver {
@@ -16,10 +19,8 @@ export class ClientResolver {
     }
 
     @Query(returns => [Client])
-    async getClients(
-        @Args('includeDeleted', { nullable: true }) includeDeleted?: boolean
-    ): Promise<Client[]> {
-        return this.clientService.getAllClients(includeDeleted);
+    async getClients(): Promise<Client[]> {
+        return this.clientService.getAllClients();
     }
 
     @Mutation(returns => Client)
@@ -39,7 +40,9 @@ export class ClientResolver {
 
     @Mutation(returns => Client)
     async deleteClient(@Args('id') id: string): Promise<Client> {
-        return this.clientService.softDeleteClient(id);
+        const deletedClient = await this.clientService.softDeleteClient(id);
+        pubSub.publish('clientDeleted', { clientDeleted: deletedClient });
+        return deletedClient;
     }
 
     @Mutation(returns => Client)
@@ -56,5 +59,10 @@ export class ClientResolver {
         @Args('tagId', { type: () => Int }) tagId: number,
     ): Promise<Client> {
         return this.clientService.removeTagFromClient(clientId, tagId);
+    }
+
+    @Subscription(returns => Client)
+    clientDeleted() {
+        return pubSub.asyncIterableIterator('clientDeleted');
     }
 }
