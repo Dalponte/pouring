@@ -1,13 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ClientService } from './client.service';
-import { ClientResolver } from './client.resolver';
-import { PrismaService } from '../prisma/prisma.service';
+import { ClientQueryResolver } from './resolvers/client.query.resolver';
+import { ClientMutationResolver } from './resolvers/client.mutation.resolver';
+import { ClientSubscriptionResolver } from './resolvers/client.subscription.resolver';
+import { PrismaModule } from '../prisma/prisma.module';
+import { PubSub } from 'graphql-subscriptions';
 
 @Module({
+    imports: [PrismaModule],
     providers: [
         ClientService,
-        ClientResolver,
-        PrismaService,
+        ClientQueryResolver,
+        ClientMutationResolver,
+        ClientSubscriptionResolver,
+        {
+            provide: 'PUB_SUB',
+            useValue: new PubSub(),
+        }
     ],
     exports: [ClientService],
 })

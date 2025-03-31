@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TagService } from './tag.service';
-import { TagResolver } from './tag.resolver';
-import { PrismaService } from '../prisma/prisma.service';
+import { TagQueryResolver } from './resolvers/tag.query.resolver';
+import { TagMutationResolver } from './resolvers/tag.mutation.resolver';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-    providers: [
-        TagService,
-        TagResolver,
-        PrismaService,
-    ],
+    imports: [PrismaModule],
+    providers: [TagService, TagQueryResolver, TagMutationResolver],
     exports: [TagService],
 })
 export class TagModule { }

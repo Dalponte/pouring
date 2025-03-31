@@ -1,27 +1,17 @@
-import { Resolver, Query, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
-import { ClientService } from './client.service';
-import { Client } from './client.model';
-import { CreateClientInput } from './dto/create-client.input';
-import { UpdateClientInput } from './dto/update-client.input';
+import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { ClientService } from '../client.service';
+import { Client } from '../client.model';
+import { CreateClientInput } from '../dto/create-client.input';
+import { UpdateClientInput } from '../dto/update-client.input';
+import { Inject } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
 
-const pubSub = new PubSub();
-
 @Resolver(of => Client)
-export class ClientResolver {
+export class ClientMutationResolver {
     constructor(
         private readonly clientService: ClientService,
+        @Inject('PUB_SUB') private readonly pubSub: PubSub,
     ) { }
-
-    @Query(returns => Client, { nullable: true })
-    async getClient(@Args('id') id: string): Promise<Client | null> {
-        return this.clientService.getClient(id);
-    }
-
-    @Query(returns => [Client])
-    async getClients(): Promise<Client[]> {
-        return this.clientService.getAllClients();
-    }
 
     @Mutation(returns => Client)
     async createClient(
@@ -41,7 +31,7 @@ export class ClientResolver {
     @Mutation(returns => Client)
     async deleteClient(@Args('id') id: string): Promise<Client> {
         const deletedClient = await this.clientService.softDeleteClient(id);
-        pubSub.publish('clientDeleted', { clientDeleted: deletedClient });
+        this.pubSub.publish('clientDeleted', { clientDeleted: deletedClient });
         return deletedClient;
     }
 
@@ -59,10 +49,5 @@ export class ClientResolver {
         @Args('code') code: string,
     ): Promise<Client> {
         return this.clientService.removeTagFromClientByCode(clientId, code);
-    }
-
-    @Subscription(returns => Client)
-    clientDeleted() {
-        return pubSub.asyncIterableIterator('clientDeleted');
     }
 }

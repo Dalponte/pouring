@@ -1,31 +1,16 @@
-import { Resolver, Query, Mutation, Args, Subscription } from '@nestjs/graphql';
-import { PubSub } from 'graphql-subscriptions';
-import { TapService } from './tap.service';
-import { Tap } from './tap.model';
-import { GraphQLJSON } from 'graphql-type-json';
+import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { TapService } from '../tap.service';
+import { Tap } from '../tap.model';
 import { Inject } from '@nestjs/common';
+import { PubSub } from 'graphql-subscriptions';
+import { GraphQLJSON } from 'graphql-type-json';
 
 @Resolver(of => Tap)
-export class TapResolver {
+export class TapMutationResolver {
     constructor(
         private readonly tapService: TapService,
         @Inject('PUB_SUB') private readonly pubSub: PubSub,
     ) { }
-
-    @Query(returns => Tap)
-    async getTap(
-        @Args('id') id: string,
-        @Args('includeDeleted', { nullable: true }) includeDeleted?: boolean
-    ): Promise<Tap | null> {
-        return this.tapService.getTap(id, includeDeleted);
-    }
-
-    @Query(returns => [Tap])
-    async getTaps(
-        @Args('includeDeleted', { nullable: true }) includeDeleted?: boolean
-    ): Promise<Tap[]> {
-        return this.tapService.getAllTaps(includeDeleted);
-    }
 
     @Mutation(returns => Tap)
     async createTap(
@@ -67,30 +52,5 @@ export class TapResolver {
         const permanentlyDeletedTap = await this.tapService.hardDeleteTap(id);
         this.pubSub.publish('tapHardDeleted', { tapHardDeleted: permanentlyDeletedTap });
         return permanentlyDeletedTap;
-    }
-
-    @Subscription(returns => Tap)
-    tapAdded() {
-        return this.pubSub.asyncIterableIterator('tapAdded');
-    }
-
-    @Subscription(returns => Tap)
-    tapUpdated() {
-        return this.pubSub.asyncIterableIterator('tapUpdated');
-    }
-
-    @Subscription(returns => Tap)
-    tapDeleted() {
-        return this.pubSub.asyncIterableIterator('tapDeleted');
-    }
-
-    @Subscription(returns => Tap)
-    tapRestored() {
-        return this.pubSub.asyncIterableIterator('tapRestored');
-    }
-
-    @Subscription(returns => Tap)
-    tapHardDeleted() {
-        return this.pubSub.asyncIterableIterator('tapHardDeleted');
     }
 }
