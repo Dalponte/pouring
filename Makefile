@@ -1,30 +1,29 @@
 # Docker commands
-docker-up:
+up:
 	docker-compose up -d
 
-docker-down:
+down:
 	docker-compose down
 
-docker-logs:
+logs:
 	docker-compose logs -f
 
-docker-build:
+build:
 	docker-compose build --no-cache
-
-docker-recreate:
-	docker-compose up --build --force-recreate --remove-orphans
 
 # Add a specific target to just prepare MQTT
 setup-mqtt:
 	mkdir -p mqtt/config mqtt/data mqtt/log
+	cp -f apps/mqtt/mosquitto.conf mqtt/config/
+	touch mqtt/data/.gitkeep mqtt/log/.gitkeep
 	chmod -R 777 mqtt
 
 # Project start
-dev-backend:
+backend:
 	cd apps/backend && npm run dev
 
-dev-taps:
-	cd apps/taps && npm run dev
+dashboard:
+	cd apps/dashboard && npm run dev
 
 # Database commands
 db-migrate:
