@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../../src/app.module';
-import { PrismaService } from '../../src/prisma/prisma.service';
-import { CreateTagInput } from '../../src/tag/dto/create-tag.input';
-import { UpdateTagInput } from '../../src/tag/dto/update-tag.input';
+import { AppModule } from '../src/app.module';
+import { PrismaService } from '../src/prisma/prisma.service';
+import { CreateTagInput } from '../src/tag/dto/create-tag.input';
+import { UpdateTagInput } from '../src/tag/dto/update-tag.input';
 
 describe('TagMutationResolver (e2e)', () => {
     let app: INestApplication;
