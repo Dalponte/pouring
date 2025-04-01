@@ -1,11 +1,16 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { DispenseService } from '../dispense.service';
 import { Dispense } from '../dispense.model';
-import { GraphQLJSON } from 'graphql-type-json';
 import { Inject } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
 import { CreateDispenseInput } from '../dto/create-dispense.input';
+
+import { registerEnumType } from '@nestjs/graphql';
 import { DispenseType } from '@prisma/client';
+
+registerEnumType(DispenseType, {
+    name: 'DispenseType',
+});
 
 @Resolver(of => Dispense)
 export class DispenseMutationResolver {
@@ -16,13 +21,9 @@ export class DispenseMutationResolver {
 
     @Mutation(returns => Dispense)
     async createDispense(
-        @Args('type') type: DispenseType,
-        @Args('meta', { type: () => GraphQLJSON }) meta: any,
-        @Args('tapId', { nullable: true }) tapId: string,
-        @Args('clientId', { nullable: true }) clientId?: string,
+        @Args('createDispenseInput') createDispenseInput: CreateDispenseInput
     ): Promise<Dispense> {
-        const input: CreateDispenseInput = { type, meta, tapId, clientId };
-        const newDispense = await this.dispenseService.createDispense(input);
+        const newDispense = await this.dispenseService.createDispense(createDispenseInput);
         this.pubSub.publish('dispenseAdded', { dispenseAdded: newDispense });
         return newDispense;
     }

@@ -17,6 +17,13 @@ input CreateClientInput {
   name: String!
 }
 
+input CreateDispenseInput {
+  clientId: String
+  meta: JSON!
+  tapId: String!
+  type: DispenseType!
+}
+
 input CreateTagInput {
   code: String!
   meta: JSON
@@ -45,6 +52,13 @@ type Dispense {
   updatedAt: DateTime!
 }
 
+enum DispenseType {
+  AUTO_SERVICE
+  LOSS
+  MAINTENANCE
+  ORDER
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -54,7 +68,7 @@ type Mutation {
   addClientToTag(clientId: String!, tagId: Int!): Tag!
   addTagToClientByCode(clientId: String!, code: String!): Client!
   createClient(createClientInput: CreateClientInput!): Client!
-  createDispense(clientId: String, meta: JSON!, tapId: String, type: String!): Dispense!
+  createDispense(createDispenseInput: CreateDispenseInput!): Dispense!
   createTag(createTagInput: CreateTagInput!): Tag!
   createTap(createTapInput: CreateTapInput!): Tap!
   deleteClient(id: String!): Client!

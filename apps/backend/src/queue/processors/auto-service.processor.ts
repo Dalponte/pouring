@@ -22,7 +22,10 @@ export class AutoServiceProcessor extends WorkerHost {
         super();
     }
 
-    private async getClientId(tagId: string): Promise<string | null> {
+    private async getClientId(tagId?: string): Promise<string | undefined> {
+        if (!tagId) {
+            return undefined;
+        }
         const client = await this.prisma.client.findFirst({
             where: {
                 tags: {
@@ -33,7 +36,7 @@ export class AutoServiceProcessor extends WorkerHost {
             }
         });
 
-        return client ? client.id : null;
+        return client?.id;
     }
 
     async process(job: Job<TapEvent, AutoServiceProcessorResult, string>) {
@@ -41,7 +44,7 @@ export class AutoServiceProcessor extends WorkerHost {
 
         const tapEvent = job.data;
 
-        const clientId = tapEvent.tagId ? await this.getClientId(tapEvent.tagId) : undefined
+        const clientId = await this.getClientId(tapEvent?.tagId)
 
         const dispenseInput: CreateDispenseInput = {
             type: tapEvent.type,
