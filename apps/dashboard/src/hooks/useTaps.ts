@@ -40,13 +40,22 @@ export function useTaps(includeDeleted = false) {
         refetchQueries: [{ query: GET_TAPS, variables: { includeDeleted } }],
     });
 
-    const createTap = async (name: string, meta?: any) => {
-        const result = await createTapMutation({ variables: { name, meta } });
+    const createTap = async (name: string, meta: any) => {
+        const result = await createTapMutation({
+            variables: {
+                createTapInput: { name, meta }
+            }
+        });
         return result.data.createTap;
     };
 
     const updateTap = async (id: string, name?: string, meta?: any) => {
-        const result = await updateTapMutation({ variables: { id, name, meta } });
+        const result = await updateTapMutation({
+            variables: {
+                id,
+                updateTapInput: { name, meta }
+            }
+        });
         return result.data.updateTap;
     };
 

@@ -36,8 +36,8 @@ export const DELETE_CLIENT = gql`
 
 // Tap Mutations
 export const CREATE_TAP = gql`
-  mutation CreateTap($name: String!, $meta: JSON) {
-    createTap(name: $name, meta: $meta) {
+  mutation CreateTap($createTapInput: CreateTapInput!) {
+    createTap(createTapInput: $createTapInput) {
       id
       name
       meta
@@ -49,8 +49,8 @@ export const CREATE_TAP = gql`
 `;
 
 export const UPDATE_TAP = gql`
-  mutation UpdateTap($id: String!, $name: String, $meta: JSON) {
-    updateTap(id: $id, name: $name, meta: $meta) {
+  mutation UpdateTap($id: String!, $updateTapInput: UpdateTapInput!) {
+    updateTap(id: $id, updateTapInput: $updateTapInput) {
       id
       name
       meta
@@ -158,8 +158,8 @@ export const REMOVE_TAG_FROM_CLIENT = gql`
 
 // Dispense Mutations
 export const CREATE_DISPENSE = gql`
-  mutation CreateDispense($type: String!, $meta: JSON!, $clientId: String, $tapId: String) {
-    createDispense(type: $type, meta: $meta, clientId: $clientId, tapId: $tapId) {
+  mutation CreateDispense($createDispenseInput: CreateDispenseInput!) {
+    createDispense(createDispenseInput: $createDispenseInput) {
       id
       type
       meta

@@ -32,6 +32,13 @@ export type Tap = {
     dispenses?: Maybe<Array<Dispense>>;
 };
 
+export enum DispenseType {
+    AUTO_SERVICE = 'AUTO_SERVICE',
+    LOSS = 'LOSS',
+    MAINTENANCE = 'MAINTENANCE',
+    ORDER = 'ORDER'
+}
+
 export type Dispense = {
     id: string;
     type: string;
@@ -66,4 +73,21 @@ export type UpdateTagInput = {
     name?: Maybe<string>;
     description?: Maybe<string>;
     meta?: Maybe<any>;
+};
+
+export type CreateTapInput = {
+    name: string;
+    meta: any;
+};
+
+export type UpdateTapInput = {
+    name?: Maybe<string>;
+    meta?: Maybe<any>;
+};
+
+export type CreateDispenseInput = {
+    type: DispenseType;
+    meta: any;
+    tapId: string;
+    clientId?: Maybe<string>;
 };

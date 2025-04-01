@@ -1,26 +1,20 @@
 import { gql } from "@apollo/client";
 
-export const DISPENSE_ADDED = gql`
-  subscription DispenseAdded {
-    dispenseAdded {
+// Client Subscriptions
+export const CLIENT_DELETED = gql`
+  subscription ClientDeleted {
+    clientDeleted {
       id
-      type
+      name
       meta
-      clientId
-      tapId
       createdAt
-      client {
-        id
-        name
-      }
-      tap {
-        id
-        name
-      }
+      updatedAt
+      deletedAt
     }
   }
 `;
 
+// Tap Subscriptions
 export const TAP_ADDED = gql`
   subscription TapAdded {
     tapAdded {
@@ -60,6 +54,15 @@ export const TAP_DELETED = gql`
   }
 `;
 
+export const TAP_HARD_DELETED = gql`
+  subscription TapHardDeleted {
+    tapHardDeleted {
+      id
+      name
+    }
+  }
+`;
+
 export const TAP_RESTORED = gql`
   subscription TapRestored {
     tapRestored {
@@ -73,51 +76,25 @@ export const TAP_RESTORED = gql`
   }
 `;
 
-export const CLIENT_ADDED = gql`
-  subscription ClientAdded {
-    clientAdded {
+// Dispense Subscriptions
+export const DISPENSE_ADDED = gql`
+  subscription DispenseAdded {
+    dispenseAdded {
       id
-      name
+      type
       meta
+      clientId
+      tapId
       createdAt
       updatedAt
-      deletedAt
-      tags {
+      client {
         id
-        code
-        reference
+        name
       }
-    }
-  }
-`;
-
-export const CLIENT_UPDATED = gql`
-  subscription ClientUpdated {
-    clientUpdated {
-      id
-      name
-      meta
-      createdAt
-      updatedAt
-      deletedAt
-      tags {
+      tap {
         id
-        code
-        reference
+        name
       }
-    }
-  }
-`;
-
-export const CLIENT_DELETED = gql`
-  subscription ClientDeleted {
-    clientDeleted {
-      id
-      name
-      meta
-      createdAt
-      updatedAt
-      deletedAt
     }
   }
 `;
